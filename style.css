@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: purple;
+    text-align: center;
+}
+
+canvas {
+    background-color: #fff;
+}
+.menu{
+    min-width: 1200 px ;
+    min-height: 50px ;
+    width: 1200px;
+    background-color: blueviolet;
+    text-align: center;
+    margin: 0 auto; 
+    
+}
+.menu button{
+    background-color: plum;
+    border: none;
+    margin-top: 10px;
+}
+.menu button:hover{
+    background-color: purple;
+}
