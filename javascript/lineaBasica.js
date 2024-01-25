@@ -35,40 +35,37 @@ mainCanvas.addEventListener("click", function(event){
 
 
 //FUNCION PARA DIBUJAR
-function DibujarLinea(){
-  context.beginPath();
+function DibujarLinea() {
   context.lineWidth = 1;
 
-  //CALCULO DE LA PENDIENTE
-  const m = (PtFinal.y - PtInicio.y)/(PtFinal.x - PtInicio.x);
-  //CALCULO DE LA ORDENADA AL ORIGEN
-  const b = PtInicio.y - m *PtInicio.x;
+  // CALCULO DE LA PENDIENTE
+  const m = (PtFinal.y - PtInicio.y) / (PtFinal.x - PtInicio.x);
+  // CALCULO DE LA ORDENADA AL ORIGEN
+  const b = PtInicio.y - m * PtInicio.x;
 
   deltaY = PtFinal.y - PtInicio.y;
   deltaX = PtFinal.x - PtInicio.x;
 
-  //CONDICION PARA COMPROBAR SI DELTA Y ES MAYOR QUE DELTA X
+  // CONDICION PARA COMPROBAR SI DELTA Y ES MAYOR QUE DELTA X
   // ES DECIR LA RECTA ESTA INVERTIDA
 
-  if (deltaY > deltaX){
-
-    if (PtFinal.y > PtInicio.y){
+  if (deltaY > deltaX) {
+    if (PtFinal.y > PtInicio.y) {
       for (let y = PtInicio.y; y <= PtFinal.y; y++) {
         const x = (y - b) / m;
-        context.lineTo (x, y);
+        context.fillRect(x, y, 1, 1);
       }
-    }else{
+    } else {
       for (let y = PtFinal.y; y <= PtInicio.y; y++) {
         const x = (y - b) / m;
-        context.lineTo (x, y);
+        context.fillRect(x, y, 1, 1);
       }
     }
-  }else{
-    //DIBUJAR LA LINEA
+  } else {
+    // DIBUJAR LA LINEA
     for (let x = PtInicio.x; x <= PtFinal.x; x++) {
-      const y = m * x +b;
-      context.lineTo (x, y);
+      const y = m * x + b;
+      context.fillRect(x, y, 1, 1);
     }
   }
-  context.stroke();
 }
