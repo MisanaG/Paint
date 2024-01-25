@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint con esteroides</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Paint</h1>
+
+    <div class="menu">
+        <button id="lapiz" name="lapiz"><img src="img/lapiz.png" alt="Dibujar"></button>
+        <button id="linea" name="linea"><img src="img/linea.png" alt="Dibujar línea"></button>
+    </div>
+
+    <canvas id="Canvas" width="1200" height="450" style="border:1px solid #000000;"></canvas>
+    
+</body>
+
+<script>
+    document.getElementById('lapiz').addEventListener('click', function () {
+        
+        var script = document.createElement('script');
+        script.src = 'javascript/dibujar.js';
+        document.head.appendChild(script);
+    });
+
+    document.getElementById('linea').addEventListener('click', function () {
+        var script = document.createElement('script');
+        script.src = 'javascript/lineaBasica.js';
+        document.head.appendChild(script);
+    });
+</script>
+
+</html>
