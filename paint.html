@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paint con esteroides</title>
     <link rel="stylesheet" href="style.css">
+    <script src="javascript/funciones.js"></script>
 </head>
 <body>
     <h1>Paint</h1>
@@ -12,6 +13,8 @@
     <div class="menu">
         <button id="lapiz" name="lapiz"><img src="img/lapiz.png" alt="Dibujar"></button>
         <button id="linea" name="linea"><img src="img/linea.png" alt="Dibujar línea"></button>
+        <button id="lineaB" name="lineaB"><img src="img/linea2.png" alt="Dibujar Bresenham"></button>
+        <button id="cuadrado" name="cuadrado"><img src="img/cuadrado.png" alt="Dibujar Cuadrado"></button>
     </div>
 
     <canvas id="Canvas" width="1200" height="450" style="border:1px solid #000000;"></canvas>
@@ -20,7 +23,6 @@
 
 <script>
     document.getElementById('lapiz').addEventListener('click', function () {
-        
         var script = document.createElement('script');
         script.src = 'javascript/dibujar.js';
         document.head.appendChild(script);
@@ -29,6 +31,17 @@
     document.getElementById('linea').addEventListener('click', function () {
         var script = document.createElement('script');
         script.src = 'javascript/lineaBasica.js';
+        document.head.appendChild(script);
+    });
+    document.getElementById('lineaB').addEventListener('click', function () {
+        var script = document.createElement('script');
+        script.src = 'javascript/lineaBresenham.js';
+        document.head.appendChild(script);
+    });
+
+    document.getElementById('cuadrado').addEventListener('click', function () {
+        var script = document.createElement('script');
+        script.src = 'javascript/cuadrado.js';
         document.head.appendChild(script);
     });
 </script>
