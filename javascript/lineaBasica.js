@@ -33,5 +33,3 @@ mainCanvas.addEventListener("click", function(event){
   }
 });
 
-
-
