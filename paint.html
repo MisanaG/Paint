@@ -17,6 +17,7 @@
         <button id="lineaDDA" name="lineaDDA"><img src="img/linea3.png" alt="Dibujar DDA"></button>
         <button id="cuadrado" name="cuadrado"><img src="img/cuadrado.png" alt="Dibujar Cuadrado"></button>
         <button id="circuloB" name="circuloB"><img src="img/circulo.png" alt="Dibujar Circulo"></button>
+        <button id="poligonoR" name="poligonoR"><img src="img/poligonoR.png" alt="Dibujar Poligono regular"></button>
     </div>
 
     <canvas id="Canvas" width="1200" height="450" style="border:1px solid #000000;"></canvas>
@@ -53,6 +54,11 @@
     document.getElementById('circuloB').addEventListener('click', function () {
         var script = document.createElement('script');
         script.src = 'javascript/CirculoBresenham.js';
+        document.head.appendChild(script);
+    });
+    document.getElementById('poligonoR').addEventListener('click', function () {
+        var script = document.createElement('script');
+        script.src = 'javascript/PoligonoR.js';
         document.head.appendChild(script);
     });
 </script>

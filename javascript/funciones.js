@@ -140,30 +140,43 @@ function DibujarCuadrado(X1, Y1, X2, Y2) {
 
 function CirculoBresenham(xc , yc, r){
   let x = 0;
-    let y = r;
-    let p = 3 - 2 * r;
+  let y = r;
+  let p = 3 - 2 * r;
 
-    function dibujarPuntos(x, y) {
-        context.fillRect(xc + x, yc + y, 1, 1);
-        context.fillRect(xc - x, yc + y, 1, 1);
-        context.fillRect(xc + x, yc - y, 1, 1);
-        context.fillRect(xc - x, yc - y, 1, 1);
-        context.fillRect(xc + y, yc + x, 1, 1);
-        context.fillRect(xc - y, yc + x, 1, 1);
-        context.fillRect(xc + y, yc - x, 1, 1);
-        context.fillRect(xc - y, yc - x, 1, 1);
+  function dibujarPuntos(x, y) {
+    context.fillRect(xc + x, yc + y, 1, 1);
+    context.fillRect(xc - x, yc + y, 1, 1);
+    context.fillRect(xc + x, yc - y, 1, 1);
+    context.fillRect(xc - x, yc - y, 1, 1);
+    context.fillRect(xc + y, yc + x, 1, 1);
+    context.fillRect(xc - y, yc + x, 1, 1);
+    context.fillRect(xc + y, yc - x, 1, 1);
+    context.fillRect(xc - y, yc - x, 1, 1);
+  }
+
+  dibujarPuntos(x, y);
+
+  while (x < y) {
+    x++;
+    if (p < 0) {
+      p += 4 * x + 6;
+    } else {
+      y--;
+      p += 4 * (x - y) + 10;
     }
-
     dibujarPuntos(x, y);
+  }
+}
 
-    while (x < y) {
-        x++;
-        if (p < 0) {
-            p += 4 * x + 6;
-        } else {
-            y--;
-            p += 4 * (x - y) + 10;
-        }
-        dibujarPuntos(x, y);
-    }
+function PoligonoRegular(xc, yc , r , l){
+  let angulo = (Math.PI * 2) / l;
+  let antx = xc + r;
+  let anty = yc;
+  for (let i = 1; i <= l; i ++){
+    let x = xc + r * Math.cos(i * angulo);
+    let y = yc + r * Math.sin(i * angulo);
+    LineaDDA(antx, anty, x, y);
+    antx = x;
+    anty = y;
+  }
 }
