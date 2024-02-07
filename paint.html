@@ -24,57 +24,133 @@
     <canvas id="Canvas" width="1200" height="450" style="border:1px solid #000000;"></canvas>
 
     <div class="inputPoligono" id="inputPoligono" style="display: none;">
-        <label>Ingrese el numero de lados: </label><br><input type="number" name="numlados" id="numlados ">
+        <label>Ingrese el numero de lados: </label><br><input type="number" name="numlados" id="numlados">
         <button id="poligonoR" name="poligonoR">Dibujar</button>
     </div>
     
 </body>
 
 <script>
-    document.getElementById('lapiz').addEventListener('click', function () {
-        var script = document.createElement('script');
-        script.src = 'javascript/dibujar.js';
-        document.head.appendChild(script);
+
+    //GUARDAR EL ELEMENTO Y EL CONTEXTO
+    const mainCanvas = document.getElementById("Canvas");
+    const context = mainCanvas.getContext("2d");
+
+    //PUNTOS DE LA GRAFICA
+    let PtInicio = {x: 0, y: 0};
+    let PtFinal = {x: 0, y: 0};
+
+    var PriClick = true;
+    var Poligono = false;
+    var Elipse = false;
+    var Circulo = false;
+    var LineaBre = false;
+    var LineaBase = false;
+    var LineaDDAs = false;
+    var Cuadrado = false;
+    var Dibujar = false;
+
+    mainCanvas.addEventListener("click", function(event){
+        //OBTENER COORDENADAS
+        var  rect = mainCanvas.getBoundingClientRect();
+        var mouseX = event.clientX - rect.left;
+        var mouseY = event.clientY - rect.top;
+
+        //DIBUJAR PRIMER PUNTO
+        if (PriClick){
+            PtInicio.x = mouseX;
+            PtInicio.y = mouseY;
+            PriClick = false;
+        }else {
+            PtFinal.x = mouseX;
+            PtFinal.y = mouseY;
+            if (Elipse == true){
+                
+                radioX = Math.abs(PtFinal.x - PtInicio.x);
+                radioY = Math.abs(PtFinal.y - PtInicio.y);
+
+                DibujarElipse(PtInicio.x, PtInicio.y, radioX, radioY);
+            }else if(Poligono == true){
+                radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
+                var inputNumeroLados = document.getElementById("numlados");
+
+                lados = inputNumeroLados.value;
+                
+                PoligonoRegular(PtInicio.x, PtInicio.y, radio, lados);
+            }else if(Circulo == true){
+                radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
+                
+                CirculoBresenham(PtInicio.x, PtInicio.y, radio);
+
+            }else if(Cuadrado == true){
+                DibujarCuadrado(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+
+            }else if(LineaDDAs == true){
+                LineaDDA(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+
+            }else if(LineaBre == true){
+                LineaBresenham(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+
+            }else if(LineaBase == true){
+                DibujarLinea(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+
+            }else if(Dibujar == true){
+            }
+
+            
+
+            //REINICIO DE VARIABLES
+            PtInicio = {x: 0, y: 0};
+            PtFinal = {x: 0, y: 0};
+            PriClick = true;
+        }
     });
 
+    function cancelar(){
+        Poligono = false;
+        Elipse = false;
+        Circulo = false;
+        LineaBre = false;
+        LineaBase = false;
+        LineaDDAs = false;
+        Cuadrado = false;
+        Dibujar = false;
+    }
+
+    document.getElementById('lapiz').addEventListener('click', function () {
+        Dibujar = true;
+    });
     document.getElementById('linea').addEventListener('click', function () {
-        var script = document.createElement('script');
-        script.src = 'javascript/lineaBasica.js';
-        document.head.appendChild(script);
+        cancelar()
+        LineaBase = true;
     });
     document.getElementById('lineaB').addEventListener('click', function () {
-        var script = document.createElement('script');
-        script.src = 'javascript/lineaBresenham.js';
-        document.head.appendChild(script);
+        cancelar()
+        LineaBre = true;
     });
     document.getElementById('lineaDDA').addEventListener('click', function () {
-        var script = document.createElement('script');
-        script.src = 'javascript/lineaDDA.js';
-        document.head.appendChild(script);
+        cancelar()
+        LineaDDAs = true;
     });
     document.getElementById('cuadrado').addEventListener('click', function () {
-        var script = document.createElement('script');
-        script.src = 'javascript/cuadrado.js';
-        document.head.appendChild(script);
+        cancelar()
+        Cuadrado = true;
     });
     document.getElementById('circuloB').addEventListener('click', function () {
-        var script = document.createElement('script');
-        script.src = 'javascript/CirculoBresenham.js';
-        document.head.appendChild(script);
+        cancelar()
+        Circulo = true;
     });
     document.getElementById('poligonoRInput').addEventListener('click', function () {
         document.getElementById('inputPoligono').style.display = 'block';
     });
     document.getElementById('poligonoR').addEventListener('click', function () {
-        var script = document.createElement('script');
-        script.src = 'javascript/PoligonoR.js';
-        document.head.appendChild(script);
+        cancelar()
+        Poligono = true;
         document.getElementById('inputPoligono').style.display = 'none';
     });
     document.getElementById('elipse').addEventListener('click', function () {
-        var script = document.createElement('script');
-        script.src = 'javascript/ElipsePM.js';
-        document.head.appendChild(script);
+        cancelar()
+        Elipse = true;
     });
 </script>
 
