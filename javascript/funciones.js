@@ -1,3 +1,4 @@
+//FUNCIONAMIENTO PARA DIBUJAR UNA LINEA POR EL METODO BASICO
 function DibujarLinea(X1, Y1, X2, Y2) {
   context.lineWidth = 1;
   
@@ -33,6 +34,7 @@ function DibujarLinea(X1, Y1, X2, Y2) {
   }
 }
 
+//FUNCIONAMIENTO PARA DIBUJAR LA LINEA POR EL METODO DE BRESENHAM
 function LineaBresenham(X1, Y1, X2, Y2) {
 
   var dY = Y2 - Y1;
@@ -85,6 +87,7 @@ function LineaBresenham(X1, Y1, X2, Y2) {
   } while (!(x === X2 && y === Y2)); 
 }
 
+//FUNCIONAMIENTO PARA DIBUJAR LA LINEA POR EL METODO DDA
 function LineaDDA(X1, Y1, X2, Y2){
   let x = X1, y = Y1;
   const dX = Math.abs(X2 - X1);
@@ -114,6 +117,7 @@ function LineaDDA(X1, Y1, X2, Y2){
   }
 }
 
+//FUNCIONAMIENTO PARA DIBUJAR EL CUADRADP
 function DibujarCuadrado(X1, Y1, X2, Y2) {
     context.lineWidth = 1;
 
@@ -138,6 +142,7 @@ function DibujarCuadrado(X1, Y1, X2, Y2) {
     }
 }
 
+//FUNCIONAMIENTO PARA DIBUJAR EL CIRCULO USANDO EL ALGORITMO DE BRESENHAM
 function CirculoBresenham(xc , yc, r){
   let x = 0;
   let y = r;
@@ -168,6 +173,7 @@ function CirculoBresenham(xc , yc, r){
   }
 }
 
+//FUNCIONAMIENTO PARA DIBIJAR UN POLIGONO REGULAR
 function PoligonoRegular(xc, yc , r , l){
   let angulo = (Math.PI * 2) / l;
   let antx = xc + r;
@@ -179,4 +185,45 @@ function PoligonoRegular(xc, yc , r , l){
     antx = x;
     anty = y;
   }
+}
+
+
+//FUNCIONAMIENTO PARA DIBUJAR UNA ELIPSE
+function DibujarElipse(xc, yc, a, b) {
+  var x = 0;
+  var y = b;    
+  
+  var px = Math.round(Math.pow(b, 2) - Math.pow(a, 2) * b + 0.25 * Math.pow(a, 2));
+  PuntosElipse(context, x, y, xc, yc);
+  
+  while (Math.pow(b, 2) * x < Math.pow(a, 2)* y) {
+    x++;
+    if (px < 0) {
+      px += 2 * Math.pow(b, 2) * x + Math.pow(b, 2);
+    } else {
+      y--;
+      px += 2 * Math.pow(b, 2) * x - 2 * Math.pow(a, 2)* y + Math.pow(b, 2);
+    }
+    PuntosElipse(context, x, y, xc, yc);
+  }
+  
+  var py = Math.round(Math.pow(b, 2) * (x + 0.5) * (x + 0.5) + Math.pow(a, 2) * (y - 1) * (y - 1) - Math.pow(a, 2) * Math.pow(b, 2));
+  
+  while (y > 0) {
+    y--;
+    if (py < 0) {
+      x++;
+      py += 2 * Math.pow(b, 2) * x - 2 * Math.pow(a, 2)* y + Math.pow(a, 2);
+    } else {
+      py += -2 * Math.pow(a, 2)* y + Math.pow(a, 2);
+    }
+    PuntosElipse(context, x, y, xc, yc);
+  }
+}
+
+function PuntosElipse(context, x, y, xc, yc) {
+  context.fillRect(xc + x, yc + y, 1, 1);
+  context.fillRect(xc - x, yc + y, 1, 1);
+  context.fillRect(xc + x, yc - y, 1, 1);
+  context.fillRect(xc - x, yc - y, 1, 1);
 }

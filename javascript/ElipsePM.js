@@ -23,10 +23,11 @@ mainCanvas.addEventListener("click", function(event){
   }else {
     PtFinal.x = mouseX;
     PtFinal.y = mouseY;
-    radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
-    lados = 12
-    //DIBUJAR LA LINEA
-    PoligonoRegular(PtInicio.x, PtInicio.y, radio, lados);
+
+    radioX = Math.abs(PtFinal.x - PtInicio.x);
+    radioY = Math.abs(PtFinal.y - PtInicio.y);
+
+    DibujarElipse(PtInicio.x, PtInicio.y, radioX, radioY);
 
     //REINICIO DE VARIABLES
     PtInicio = {x: 0, y: 0};

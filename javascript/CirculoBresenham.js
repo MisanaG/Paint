@@ -23,7 +23,7 @@ mainCanvas.addEventListener("click", function(event){
   }else {
     PtFinal.x = mouseX;
     PtFinal.y = mouseY;
-    radio = Math.abs(PtFinal.x - PtInicio.x);
+    radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
     //DIBUJAR LA LINEA
     CirculoBresenham(PtInicio.x, PtInicio.y, radio);
 
