@@ -16,6 +16,10 @@
         <button id="lineaB" name="lineaB"><img src="img/linea2.png" alt="Dibujar Bresenham"></button>
         <button id="lineaDDA" name="lineaDDA"><img src="img/linea3.png" alt="Dibujar DDA"></button>
         <button id="cuadrado" name="cuadrado"><img src="img/cuadrado.png" alt="Dibujar Cuadrado"></button>
+
+        <button id="rectangulo" name="rectangulo"><img src="img/rectangulo.png" alt="Dibujar Rectangulo"></button>
+        <button id="rombo" name="rombo"><img src="img/rombo.png" alt="Dibujar Rombo"></button>
+
         <button id="circuloB" name="circuloB"><img src="img/circulo.png" alt="Dibujar Circulo"></button>
         <button id="poligonoRInput" name="poligonoRInput"><img src="img/poligonoR.png" alt="Dibujar Poligono regular"></button>
         <button id="elipse" name="elipse"><img src="img/elipse.png" alt="Dibujar Elipse"></button>
@@ -49,6 +53,8 @@
     var LineaDDAs = false;
     var Cuadrado = false;
     var Dibujar = false;
+    var Rectangulo = false;
+    var Rombo = false;
 
     mainCanvas.addEventListener("click", function(event){
         //OBTENER COORDENADAS
@@ -65,36 +71,33 @@
             PtFinal.x = mouseX;
             PtFinal.y = mouseY;
             if (Elipse == true){
-                
                 radioX = Math.abs(PtFinal.x - PtInicio.x);
                 radioY = Math.abs(PtFinal.y - PtInicio.y);
-
                 DibujarElipse(PtInicio.x, PtInicio.y, radioX, radioY);
             }else if(Poligono == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 var inputNumeroLados = document.getElementById("numlados");
-
                 lados = inputNumeroLados.value;
-                
                 PoligonoRegular(PtInicio.x, PtInicio.y, radio, lados);
             }else if(Circulo == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
-                
                 CirculoBresenham(PtInicio.x, PtInicio.y, radio);
-
             }else if(Cuadrado == true){
                 DibujarCuadrado(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
-
             }else if(LineaDDAs == true){
                 LineaDDA(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
-
             }else if(LineaBre == true){
                 LineaBresenham(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
-
             }else if(LineaBase == true){
                 DibujarLinea(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
-
             }else if(Dibujar == true){
+                //FALTA AGREGAR ESTE
+            }else if(Rectangulo == true){
+                DibujarRectangulo(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+            }else if(Rombo == true){
+                radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
+                lados = 4;
+                PoligonoRegular(PtInicio.x, PtInicio.y, radio, lados);
             }
 
             
@@ -115,6 +118,8 @@
         LineaDDAs = false;
         Cuadrado = false;
         Dibujar = false;
+        Rectangulo = false;
+        Rombo = false;
     }
 
     document.getElementById('lapiz').addEventListener('click', function () {
@@ -151,6 +156,14 @@
     document.getElementById('elipse').addEventListener('click', function () {
         cancelar()
         Elipse = true;
+    });
+    document.getElementById('rectangulo').addEventListener('click', function () {
+        cancelar()
+        Rectangulo = true;
+    });
+    document.getElementById('rombo').addEventListener('click', function () {
+        cancelar()
+        Rombo = true;
     });
 </script>
 

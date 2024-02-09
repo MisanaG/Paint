@@ -117,31 +117,47 @@ function LineaDDA(X1, Y1, X2, Y2){
   }
 }
 
-//FUNCIONAMIENTO PARA DIBUJAR EL CUADRADP
+//FUNCIONAMIENTO PARA DIBUJAR EL CUADRADO
 function DibujarCuadrado(X1, Y1, X2, Y2) {
-    context.lineWidth = 1;
+  context.lineWidth = 1;
 
-    if ((X2 < X1 && Y2 > Y1) || (X2 > X1 && Y2 > Y1)){
+  if ((X2 < X1 && Y2 > Y1) || (X2 > X1 && Y2 > Y1)){
     
-      dX = Math.abs(X2 - X1);
-      console.log(dX);
-      y2 = Y1 + dX;
-      LineaBresenham(X1, Y1, X2, Y1);
-      LineaBresenham(X1, y2, X2, y2);
-      LineaBresenham(X1, Y1, X1, y2);
-      LineaBresenham(X2, y2, X2, Y1);
-    }else if((X2 > X1 && Y2 < Y1) || (X2 < X1 && Y2 < Y1)){
+    dX = Math.abs(X2 - X1);
+    console.log(dX);
+    y2 = Y1 + dX;
+    LineaBresenham(X1, Y1, X2, Y1);
+    LineaBresenham(X1, y2, X2, y2);
+    LineaBresenham(X1, Y1, X1, y2);
+    LineaBresenham(X2, y2, X2, Y1);
+  }else if((X2 > X1 && Y2 < Y1) || (X2 < X1 && Y2 < Y1)){
       
-      dX = Math.abs(X2 - X1);
-      y1 = Y1 - dX;
-      LineaBresenham(X1, Y1, X2, Y1); 
-      LineaBresenham(X1, Y1, X1, y1); 
-      LineaBresenham(X2, Y1, X2, y1); 
-      LineaBresenham(X1, y1, X2, y1); 
-      
-    }
+    dX = Math.abs(X2 - X1);
+    y1 = Y1 - dX;
+    LineaBresenham(X1, Y1, X2, Y1); 
+    LineaBresenham(X1, Y1, X1, y1); 
+    LineaBresenham(X2, Y1, X2, y1); 
+    LineaBresenham(X1, y1, X2, y1);   
+  }
 }
 
+//FUNCIONAMIENTO PARA HACER RECTANGULOS
+function DibujarRectangulo(X1, Y1, X2, Y2) {
+  context.lineWidth = 1;
+
+  if ((X2 < X1 && Y2 > Y1) || (X2 > X1 && Y2 > Y1)){    
+    LineaDDA(X1, Y1, X2, Y1);
+    LineaDDA(X1, Y2, X2, Y2);
+    LineaDDA(X1, Y1, X1, Y2);
+    LineaDDA(X2, Y2, X2, Y1);
+  }else if((X2 > X1 && Y2 < Y1) || (X2 < X1 && Y2 < Y1)){
+    console.log("este es");
+    LineaDDA(X1, Y1, X2, Y1); 
+    LineaDDA(X1, Y1, X1, Y2); 
+    LineaDDA(X2, Y1, X2, Y2); 
+    LineaDDA(X1, Y2, X2, Y2);   
+  }
+}
 //FUNCIONAMIENTO PARA DIBUJAR EL CIRCULO USANDO EL ALGORITMO DE BRESENHAM
 function CirculoBresenham(xc , yc, r){
   let x = 0;
@@ -186,7 +202,6 @@ function PoligonoRegular(xc, yc , r , l){
     anty = y;
   }
 }
-
 
 //FUNCIONAMIENTO PARA DIBUJAR UNA ELIPSE
 function DibujarElipse(xc, yc, a, b) {
