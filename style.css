@@ -17,11 +17,42 @@ canvas {
     margin: 0 auto; 
     
 }
-.menu button{
+.menu button, .input button{
     background-color: plum;
     border: none;
     margin-top: 10px;
+    border-radius: 2px;
 }
-.menu button:hover{
+.menu button:hover, .input button:hover{
     background-color: purple;
+}
+.input{
+    min-height: 50px;
+    width: 20%;
+    padding: 20px;
+    border-radius: 20px;
+    background-color: blueviolet;
+    z-index: 10;
+    position: absolute;
+    top: 250px;
+    left: 520px;
+}
+
+#Rcolor{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    width: 100px;
+    height: 100px;
+    border: none;
+    cursor: pointer;
+}
+#Rcolor::-webkit-color-swatch {
+    border-radius: 50%;
+    border: 1px solid #000000;
+}
+#Rcolor::-moz-color-swatch {
+    border-radius: 50%;
+    border: 1px solid #000000;
 }

@@ -1,3 +1,61 @@
+//ESTRUCTURA PARA ALMACENAR LAS FIGURAS
+class Figura{
+  constructor(tipo, x1, y1, x2, y2){
+    this.tipo = tipo;
+    this.co = {x1, y1, x2, y2};
+    //this.relleno = relleno;
+    //this.borde = borde;
+  }
+}
+
+//PILA PARA LAS FIGURAS
+class PilaFiguras{
+  constructor(){
+    this.items = [];
+  }
+  push(figura){
+    this.items.push(figura);
+  }
+  pop(){
+    if (this.isEmpty()){
+      return "La pila está vacía";
+    }
+    return this.items.pop();
+  }
+  peek() {
+    if (this.isEmpty()) {
+      return "La pila está vacía";
+    }
+    return this.items[this.items.length - 1];
+  }
+  isEmpty() {
+    return this.items.length === 0;
+  }
+  size() {
+    return this.items.length;
+  }
+  clear() {
+    this.items = [];
+  }
+}
+
+//FUNCION PARA DESACTIVAR FUNCIONAMIENTOS
+function cancelar(){
+  document.getElementById('inputPoligono').style.display = 'none';
+  document.getElementById('inputRelleno').style.display = 'none';
+  Poligono = false;
+  Elipse = false;
+  Circulo = false;
+  LineaBre = false;
+  LineaBase = false;
+  LineaDDAs = false;
+  Cuadrado = false;
+  Dibujar = false;
+  Rectangulo = false;
+  Rombo = false;
+  Rellenar = false;
+}
+
 //FUNCIONAMIENTO PARA DIBUJAR UNA LINEA POR EL METODO BASICO
 function DibujarLinea(X1, Y1, X2, Y2) {
   context.lineWidth = 1;
@@ -209,7 +267,7 @@ function DibujarElipse(xc, yc, a, b) {
   var y = b;    
   
   var px = Math.round(Math.pow(b, 2) - Math.pow(a, 2) * b + 0.25 * Math.pow(a, 2));
-  PuntosElipse(context, x, y, xc, yc);
+  PuntosElipse(x, y, xc, yc);
   
   while (Math.pow(b, 2) * x < Math.pow(a, 2)* y) {
     x++;
@@ -219,7 +277,7 @@ function DibujarElipse(xc, yc, a, b) {
       y--;
       px += 2 * Math.pow(b, 2) * x - 2 * Math.pow(a, 2)* y + Math.pow(b, 2);
     }
-    PuntosElipse(context, x, y, xc, yc);
+    PuntosElipse(x, y, xc, yc);
   }
   
   var py = Math.round(Math.pow(b, 2) * (x + 0.5) * (x + 0.5) + Math.pow(a, 2) * (y - 1) * (y - 1) - Math.pow(a, 2) * Math.pow(b, 2));
@@ -232,13 +290,25 @@ function DibujarElipse(xc, yc, a, b) {
     } else {
       py += -2 * Math.pow(a, 2)* y + Math.pow(a, 2);
     }
-    PuntosElipse(context, x, y, xc, yc);
+    PuntosElipse(x, y, xc, yc);
   }
 }
 
-function PuntosElipse(context, x, y, xc, yc) {
+//FUNCION QUE DIBUJA LOS PUNTO DE LA ELIPSE
+function PuntosElipse( x, y, xc, yc) {
   context.fillRect(xc + x, yc + y, 1, 1);
   context.fillRect(xc - x, yc + y, 1, 1);
   context.fillRect(xc + x, yc - y, 1, 1);
   context.fillRect(xc - x, yc - y, 1, 1);
 }
+
+//FUNCION QUE BORRA EL RECTANGULO DE LA FIGURA
+function BorrarFigura(X1, Y1, X2, Y2){
+  context.clearRect(X1, Y1, X2, Y2);
+}
+
+//FUNCION PARA RELLENAR LA FIGURA
+function RellenarFigura(){
+
+}
+
