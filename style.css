@@ -8,6 +8,16 @@ body {
 canvas {
     background-color: #fff;
 }
+.canvasP{
+    position: absolute;
+    top: 130px;
+    left: 83px;
+    pointer-events: none;
+    opacity: 0.5;
+}
+.canvasO{
+    z-index: 1;
+}
 .menu{
     min-width: 1200 px ;
     min-height: 50px ;

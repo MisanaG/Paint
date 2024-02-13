@@ -57,7 +57,7 @@ function cancelar(){
 }
 
 //FUNCIONAMIENTO PARA DIBUJAR UNA LINEA POR EL METODO BASICO
-function DibujarLinea(X1, Y1, X2, Y2) {
+function DibujarLinea(context, X1, Y1, X2, Y2) {
   context.lineWidth = 1;
   
   // CALCULO DE LA PENDIENTE
@@ -93,7 +93,7 @@ function DibujarLinea(X1, Y1, X2, Y2) {
 }
 
 //FUNCIONAMIENTO PARA DIBUJAR LA LINEA POR EL METODO DE BRESENHAM
-function LineaBresenham(X1, Y1, X2, Y2) {
+function LineaBresenham(context, X1, Y1, X2, Y2) {
 
   var dY = Y2 - Y1;
   var dX = X2 - X1;
@@ -146,7 +146,7 @@ function LineaBresenham(X1, Y1, X2, Y2) {
 }
 
 //FUNCIONAMIENTO PARA DIBUJAR LA LINEA POR EL METODO DDA
-function LineaDDA(X1, Y1, X2, Y2){
+function LineaDDA(context, X1, Y1, X2, Y2){
   let x = X1, y = Y1;
   const dX = Math.abs(X2 - X1);
   const dY = Math.abs(Y2 - Y1);
@@ -176,7 +176,7 @@ function LineaDDA(X1, Y1, X2, Y2){
 }
 
 //FUNCIONAMIENTO PARA DIBUJAR EL CUADRADO
-function DibujarCuadrado(X1, Y1, X2, Y2) {
+function DibujarCuadrado(context, X1, Y1, X2, Y2) {
   context.lineWidth = 1;
 
   if ((X2 < X1 && Y2 > Y1) || (X2 > X1 && Y2 > Y1)){
@@ -184,40 +184,40 @@ function DibujarCuadrado(X1, Y1, X2, Y2) {
     dX = Math.abs(X2 - X1);
     console.log(dX);
     y2 = Y1 + dX;
-    LineaBresenham(X1, Y1, X2, Y1);
-    LineaBresenham(X1, y2, X2, y2);
-    LineaBresenham(X1, Y1, X1, y2);
-    LineaBresenham(X2, y2, X2, Y1);
+    LineaBresenham(context, X1, Y1, X2, Y1);
+    LineaBresenham(context, X1, y2, X2, y2);
+    LineaBresenham(context, X1, Y1, X1, y2);
+    LineaBresenham(context, X2, y2, X2, Y1);
   }else if((X2 > X1 && Y2 < Y1) || (X2 < X1 && Y2 < Y1)){
       
     dX = Math.abs(X2 - X1);
     y1 = Y1 - dX;
-    LineaBresenham(X1, Y1, X2, Y1); 
-    LineaBresenham(X1, Y1, X1, y1); 
-    LineaBresenham(X2, Y1, X2, y1); 
-    LineaBresenham(X1, y1, X2, y1);   
+    LineaBresenham(context, X1, Y1, X2, Y1); 
+    LineaBresenham(context, X1, Y1, X1, y1); 
+    LineaBresenham(context, X2, Y1, X2, y1); 
+    LineaBresenham(context, X1, y1, X2, y1);   
   }
 }
 
 //FUNCIONAMIENTO PARA HACER RECTANGULOS
-function DibujarRectangulo(X1, Y1, X2, Y2) {
+function DibujarRectangulo(context, X1, Y1, X2, Y2) {
   context.lineWidth = 1;
 
   if ((X2 < X1 && Y2 > Y1) || (X2 > X1 && Y2 > Y1)){    
-    LineaDDA(X1, Y1, X2, Y1);
-    LineaDDA(X1, Y2, X2, Y2);
-    LineaDDA(X1, Y1, X1, Y2);
-    LineaDDA(X2, Y2, X2, Y1);
+    LineaDDA(context, X1, Y1, X2, Y1);
+    LineaDDA(context, X1, Y2, X2, Y2);
+    LineaDDA(context, X1, Y1, X1, Y2);
+    LineaDDA(context, X2, Y2, X2, Y1);
   }else if((X2 > X1 && Y2 < Y1) || (X2 < X1 && Y2 < Y1)){
     console.log("este es");
-    LineaDDA(X1, Y1, X2, Y1); 
-    LineaDDA(X1, Y1, X1, Y2); 
-    LineaDDA(X2, Y1, X2, Y2); 
-    LineaDDA(X1, Y2, X2, Y2);   
+    LineaDDA(context, X1, Y1, X2, Y1); 
+    LineaDDA(context, X1, Y1, X1, Y2); 
+    LineaDDA(context, X2, Y1, X2, Y2); 
+    LineaDDA(context, X1, Y2, X2, Y2);   
   }
 }
 //FUNCIONAMIENTO PARA DIBUJAR EL CIRCULO USANDO EL ALGORITMO DE BRESENHAM
-function CirculoBresenham(xc , yc, r){
+function CirculoBresenham(context, xc , yc, r){
   let x = 0;
   let y = r;
   let p = 3 - 2 * r;
@@ -248,26 +248,26 @@ function CirculoBresenham(xc , yc, r){
 }
 
 //FUNCIONAMIENTO PARA DIBIJAR UN POLIGONO REGULAR
-function PoligonoRegular(xc, yc , r , l){
+function PoligonoRegular(context, xc, yc , r , l){
   let angulo = (Math.PI * 2) / l;
   let antx = xc + r;
   let anty = yc;
   for (let i = 1; i <= l; i ++){
     let x = xc + r * Math.cos(i * angulo);
     let y = yc + r * Math.sin(i * angulo);
-    LineaDDA(antx, anty, x, y);
+    LineaDDA(context, antx, anty, x, y);
     antx = x;
     anty = y;
   }
 }
 
 //FUNCIONAMIENTO PARA DIBUJAR UNA ELIPSE
-function DibujarElipse(xc, yc, a, b) {
+function DibujarElipse(context, xc, yc, a, b) {
   var x = 0;
   var y = b;    
   
   var px = Math.round(Math.pow(b, 2) - Math.pow(a, 2) * b + 0.25 * Math.pow(a, 2));
-  PuntosElipse(x, y, xc, yc);
+  PuntosElipse(context, x, y, xc, yc);
   
   while (Math.pow(b, 2) * x < Math.pow(a, 2)* y) {
     x++;
@@ -277,7 +277,7 @@ function DibujarElipse(xc, yc, a, b) {
       y--;
       px += 2 * Math.pow(b, 2) * x - 2 * Math.pow(a, 2)* y + Math.pow(b, 2);
     }
-    PuntosElipse(x, y, xc, yc);
+    PuntosElipse(context, x, y, xc, yc);
   }
   
   var py = Math.round(Math.pow(b, 2) * (x + 0.5) * (x + 0.5) + Math.pow(a, 2) * (y - 1) * (y - 1) - Math.pow(a, 2) * Math.pow(b, 2));
@@ -290,12 +290,12 @@ function DibujarElipse(xc, yc, a, b) {
     } else {
       py += -2 * Math.pow(a, 2)* y + Math.pow(a, 2);
     }
-    PuntosElipse(x, y, xc, yc);
+    PuntosElipse(context, x, y, xc, yc);
   }
 }
 
 //FUNCION QUE DIBUJA LOS PUNTO DE LA ELIPSE
-function PuntosElipse( x, y, xc, yc) {
+function PuntosElipse(context,  x, y, xc, yc) {
   context.fillRect(xc + x, yc + y, 1, 1);
   context.fillRect(xc - x, yc + y, 1, 1);
   context.fillRect(xc + x, yc - y, 1, 1);
@@ -304,7 +304,7 @@ function PuntosElipse( x, y, xc, yc) {
 
 //FUNCION QUE BORRA EL RECTANGULO DE LA FIGURA
 function BorrarFigura(X1, Y1, X2, Y2){
-  context.clearRect(X1, Y1, X2, Y2);
+  contexto.clearRect(X1, Y1, X2, Y2);
 }
 
 //FUNCION PARA RELLENAR LA FIGURA

@@ -29,7 +29,10 @@
 
     </div>
 
-    <canvas id="Canvas" width="1200" height="450" style="border:1px solid #000000;"></canvas>
+    <canvas class="canvasO" id="Canvas" width="1200" height="450" style="border:1px solid #000000;"></canvas>
+    <canvas class="canvasP" id="PreviewCanvas" width="1200" height="450" style="border:1px solid #000000;"></canvas>
+
+
 
     <div class="input" id="inputPoligono" style="display: none;">
         <label>Ingrese el numero de lados: </label><br><input type="number" name="numlados" id="numlados">
@@ -46,7 +49,11 @@
 
     //GUARDAR EL ELEMENTO Y EL CONTEXTO
     const mainCanvas = document.getElementById("Canvas");
-    const context = mainCanvas.getContext("2d");
+    const contexto = mainCanvas.getContext("2d");
+
+    //GUARDAR ELEMENTO Y CONTEXTO DE LA PREVISUALIZACION
+    const previewCanvas = document.getElementById("PreviewCanvas");
+    const previewContext = previewCanvas.getContext("2d");
 
     //PILA
     let pila1 = new PilaFiguras();
@@ -69,7 +76,18 @@
     var Rombo = false;
     var Rellenar = false;
 
-
+    mainCanvas.addEventListener("mousemove", function(event) {
+        if (PriClick == false) {
+            previewCanvas.style.zIndex = 2;
+            previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+            if (Cuadrado == true){
+                DibujarCuadrado(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+            }else if (Rectangulo == true){
+                DibujarRectangulo(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+            }
+             
+        }
+    });
     mainCanvas.addEventListener("click", function(event){
         //OBTENER COORDENADAS
         var  rect = mainCanvas.getBoundingClientRect();
@@ -84,38 +102,42 @@
         }else {
             PtFinal.x = mouseX;
             PtFinal.y = mouseY;
+            previewCanvas.style.zIndex = -1;
             if (Elipse == true){
                 radioX = Math.abs(PtFinal.x - PtInicio.x);
                 radioY = Math.abs(PtFinal.y - PtInicio.y);
-                DibujarElipse(PtInicio.x, PtInicio.y, radioX, radioY);
+                DibujarElipse(contexto, PtInicio.x, PtInicio.y, radioX, radioY);
             }else if(Poligono == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 var inputNumeroLados = document.getElementById("numlados");
                 lados = inputNumeroLados.value;
-                PoligonoRegular(PtInicio.x, PtInicio.y, radio, lados);
+                PoligonoRegular(contexto, PtInicio.x, PtInicio.y, radio, lados);
             }else if(Circulo == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
-                CirculoBresenham(PtInicio.x, PtInicio.y, radio);
+                CirculoBresenham(contexto, PtInicio.x, PtInicio.y, radio);
             }else if(Cuadrado == true){
-                DibujarCuadrado(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+                DibujarCuadrado(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
                 //GUARDAR LOS DATOS DE LA FIGURA EN LA PILA
                 let figurax = new Figura ("cuadrado",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y)
                 pila1.push(figurax);
                 //console.log("Elemento superior de la pila:", pila1.peek());
             }else if(LineaDDAs == true){
-                LineaDDA(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+                LineaDDA(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
             }else if(LineaBre == true){
-                LineaBresenham(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+                LineaBresenham(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
             }else if(LineaBase == true){
-                DibujarLinea(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+                DibujarLinea(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
             }else if(Dibujar == true){
                 //FALTA AGREGAR ESTE
             }else if(Rectangulo == true){
-                DibujarRectangulo(PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+                DibujarRectangulo(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+                let figurax = new Figura ("rectangulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y)
+                pila1.push(figurax);
             }else if(Rombo == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 lados = 4;
-                PoligonoRegular(PtInicio.x, PtInicio.y, radio, lados);
+                PoligonoRegular(contexto, PtInicio.x, PtInicio.y, radio, lados);
+
             }
 
             
@@ -124,6 +146,7 @@
             PtInicio = {x: 0, y: 0};
             PtFinal = {x: 0, y: 0};
             PriClick = true;
+            previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
         }
     });
 
@@ -179,6 +202,11 @@
             let figurax = new Figura ("cuadrado", top.co.x1, top.co.y1, top.co.x2, top.co.y2)
             pila2.push(figurax);
             //console.log("Elemento superior de la pila de rehacer:", pila2.peek());
+        }else if(top.tipo == "rectangulo"){
+            BorrarFigura(top.co.x1, top.co.y1, top.co.x2, top.co.y2);
+            //COLOCAR EN LA OTRA PILA
+            let figurax = new Figura ("rectangulo", top.co.x1, top.co.y1, top.co.x2, top.co.y2)
+            pila2.push(figurax);
         }
         //SACAR DE LA PILA
         pila1.pop();
@@ -187,8 +215,12 @@
         //console.log("Elemento superior de la pila a redibujar:", pila2.peek());
         let top = pila2.peek();
         if (top.tipo == "cuadrado"){
-            DibujarCuadrado(top.co.x1, top.co.y1, top.co.x2, top.co.y2);
+            DibujarCuadrado(contexto, top.co.x1, top.co.y1, top.co.x2, top.co.y2);
             let figurax = new Figura ("cuadrado",top.co.x1, top.co.y1, top.co.x2, top.co.y2)
+            pila1.push(figurax);
+        }else if(top.tipo == "rectangulo"){
+            DibujarRectangulo(contexto, top.co.x1, top.co.y1, top.co.x2, top.co.y2);
+            let figurax = new Figura ("rectangulo",top.co.x1, top.co.y1, top.co.x2, top.co.y2)
             pila1.push(figurax);
         }
         //SACAR DE LA PILA
