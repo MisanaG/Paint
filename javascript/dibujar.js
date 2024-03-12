@@ -5,10 +5,11 @@ const context = mainCanvas.getContext("2d");*/
 
 const dibujar = (cursorX, cursorY) => {
   if (!Dibujar) return;
+  BordesC(contexto);
   contexto.beginPath();
   contexto.moveTo(initialX, initialY);
   contexto.lineWidth = 1;
-  contexto.strokeStyle = "#000";
+  
   contexto.lineCap = "round";
   contexto.lineJoin = "round";
   contexto.lineTo(cursorX, cursorY);

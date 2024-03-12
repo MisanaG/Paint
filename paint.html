@@ -72,6 +72,9 @@
     const previewCanvas = document.getElementById("PreviewCanvas");
     const previewContext = previewCanvas.getContext("2d");
 
+    //COLOR DE LOS BORDES
+    var ColorBordes = document.getElementById('Rcolor');
+
     //PUNTOS DE LA GRAFICA
     let PtInicio = {x: 0, y: 0};
     let PtFinal = {x: 0, y: 0};
@@ -91,6 +94,8 @@
     var Trapecio = false;
 
     mainCanvas.addEventListener("mousemove", function(event) {
+
+        BordesC(previewCanvas);
         //MOVIMIENTO DE PREVISUALIZACION DEL CANVAS
         if (PriClick == false) {
             previewCanvas.style.zIndex = 2;
@@ -130,6 +135,8 @@
         var  rect = mainCanvas.getBoundingClientRect();
         var mouseX = event.clientX - rect.left;
         var mouseY = event.clientY - rect.top;
+
+        BordesC(contexto);
 
         //DIBUJAR PRIMER PUNTO
         if (PriClick){

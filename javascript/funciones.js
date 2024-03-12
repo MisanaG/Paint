@@ -19,6 +19,12 @@ function cancelar(){
 function RellenarFigura(){
 
 }
+
+function BordesC(context){
+  var color = ColorBordes.value;
+  context.fillStyle = color;
+  contexto.strokeStyle = color;
+}
 //FUNCION PARA EXPORTAR EL LIENZO COMO UNA IMAGEN
 function descargarPNG(context, fileName){
   var MIME_TYPE = "image/png";
@@ -125,6 +131,7 @@ function LineaBresenham(context, X1, Y1, X2, Y2) {
 
 //FUNCIONAMIENTO PARA DIBUJAR LA LINEA POR EL METODO DDA
 function LineaDDA(context, X1, Y1, X2, Y2){
+  
   let x = X1, y = Y1;
   const dX = Math.abs(X2 - X1);
   const dY = Math.abs(Y2 - Y1);
@@ -156,7 +163,6 @@ function LineaDDA(context, X1, Y1, X2, Y2){
 //FUNCIONAMIENTO PARA DIBUJAR EL CUADRADO
 function DibujarCuadrado(context, X1, Y1, X2, Y2) {
   context.lineWidth = 1;
-
   if ((X2 < X1 && Y2 > Y1) || (X2 > X1 && Y2 > Y1)){
     
     dX = Math.abs(X2 - X1);
