@@ -8,41 +8,58 @@
     <script src="javascript/funciones.js"></script>
 </head>
 <body>
-    <h1>Paint</h1>
 
     <div class="menu">
-        <button id="lapiz" name="lapiz"><img src="img/lapiz.png" alt="Dibujar"></button>
-        <button id="linea" name="linea"><img src="img/linea.png" alt="Dibujar línea"></button>
-        <button id="lineaB" name="lineaB"><img src="img/linea2.png" alt="Dibujar Bresenham"></button>
-        <button id="lineaDDA" name="lineaDDA"><img src="img/linea3.png" alt="Dibujar DDA"></button>
-        <button id="cuadrado" name="cuadrado"><img src="img/cuadrado.png" alt="Dibujar Cuadrado"></button>
-        <button id="rectangulo" name="rectangulo"><img src="img/rectangulo.png" alt="Dibujar Rectangulo"></button>
-        <button id="rombo" name="rombo"><img src="img/rombo.png" alt="Dibujar Rombo"></button>
-        <button id="circuloB" name="circuloB"><img src="img/circulo.png" alt="Dibujar Circulo"></button>
-        <button id="poligonoRInput" name="poligonoRInput"><img src="img/poligonoR.png" alt="Dibujar Poligono regular"></button>
-        <button id="elipse" name="elipse"><img src="img/elipse.png" alt="Dibujar Elipse"></button>
+        <button id="guardar" name="guardar"><img src="img/guardar.png" alt="Guardar"></button>
+        <button id="abrir" name="abrir"><img src="img/abrir.png" alt="Abrir archivo"></button>
 
-        <button id="relleno" name="relleno"><img src="img/balde.png" alt="Rellenar Dibujo"></button>
+        <button id="exportar" name="exportar"><img src="img/exportar.png" alt="Menu exportar"></button>
+        <div class="exportar-menu" id="exportar-menu" style="display: none;">
+            <button id="pdf" name="pdf"><img src="img/pdf.png" alt="Exportar como PDF"></button>
+            <button id="png" name="png"><img src="img/png.png" alt="Exportar como PNG"></button>
+        </div>
+        
+        <button id="lapiz" name="lapiz"><img src="img/lapiz.png" alt="Dibujar"></button>
+        <button id="texto" name="texto"><img src="img/fuente.png" alt="Escribir"></button>
+        
+        <button id="lineaDDA" name="lineaDDA"><img src="img/linea3.png" alt="Dibujar DDA"></button>
+
+        <button id="formas" name="formas"><img src="img/figuras.png" alt="Menu formas"></button>
+        <div class="formas-menu" id="formas-menu" style="display: none;">
+            <button id="cuadrado" name="cuadrado"><img src="img/cuadrado.png" alt="Dibujar Cuadrado"></button>
+            <button id="rectangulo" name="rectangulo"><img src="img/rectangulo.png" alt="Dibujar Rectangulo"></button>
+            <button id="rombo" name="rombo"><img src="img/rombo.png" alt="Dibujar Rombo"></button>
+            <button id="trapecio" name="trapecio"><img src="img/trapecio.png" alt="Dibujar Trapecio"></button> <br>
+            <button id="circuloB" name="circuloB"><img src="img/circulo.png" alt="Dibujar Circulo"></button>
+            <button id="poligonoRInput" name="poligonoRInput"><img src="img/poligonoR.png" alt="Dibujar Poligono regular"></button>
+            <button id="elipse" name="elipse"><img src="img/elipse.png" alt="Dibujar Elipse"></button>
+        </div>
+    
+        <button id="rellenar" name="rellenar"><img src="img/balde.png" alt="Rellenar"></button>
+        <input type="color" id="Rcolor" name="Rcolor" value="#000000">
+        <button id="borrador" name="borrador"><img src="img/borrador.png" alt="Borrar"></button>
+        <button id="seleccionar" name="seleccionar"><img src="img/seleccion.png" alt="Seleccionar figura"></button>
+        
+        <button id="capas" name="capas"><img src="img/capa.png" alt="Menu capas"></button>
+        <div class="capas-menu" id="capas-menu" style="display: none;">
+            <button id="frente" name="frente"><img src="img/frente.png" alt="Traer al frente"></button>
+            <button id="delante" name="delante"><img src="img/delante.png" alt="Traer delante"></button><br>
+            <button id="detras" name="detras"><img src="img/detras.png" alt="Enviar detras"></button>
+            <button id="fondo" name="fondo"><img src="img/fondo.png" alt="Enviar al fondo"></button>
+        </div>
 
         <button id="ctrlz" name="ctrlz"><img src="img/deshacer.png" alt="CTRL+Z"></button>
         <button id="ctrly" name="ctrly"><img src="img/rehacer.png" alt="CTRL+Y"></button>
-
     </div>
 
     <canvas class="canvasO" id="Canvas" width="1200" height="450" style="border:1px solid #000000;"></canvas>
     <canvas class="canvasP" id="PreviewCanvas" width="1200" height="450" style="border:1px solid #000000;"></canvas>
 
-
-
     <div class="input" id="inputPoligono" style="display: none;">
         <label>Ingrese el numero de lados: </label><br><input type="number" name="numlados" id="numlados">
         <button id="poligonoR" name="poligonoR">Dibujar</button>
     </div>
-    <div class="input" id="inputRelleno" style="display: none;">
-        <label>Selecciona un color: </label><br><input type="color" id="Rcolor" name="Rcolor" value="#ff0000">
-        <button id="rellenar" name="rellenar">Dibujar</button>
-    </div>
-    
+
 </body>
 
 <script>
@@ -55,28 +72,26 @@
     const previewCanvas = document.getElementById("PreviewCanvas");
     const previewContext = previewCanvas.getContext("2d");
 
-    //PILA
-    let pila1 = new PilaFiguras();
-    let pila2 = new PilaFiguras();
-
     //PUNTOS DE LA GRAFICA
     let PtInicio = {x: 0, y: 0};
     let PtFinal = {x: 0, y: 0};
+
+    let initialX;
+    let initialY;
 
     var PriClick = true;
     var Poligono = false;
     var Elipse = false;
     var Circulo = false;
-    var LineaBre = false;
-    var LineaBase = false;
     var LineaDDAs = false;
     var Cuadrado = false;
     var Dibujar = false;
     var Rectangulo = false;
     var Rombo = false;
-    var Rellenar = false;
+    var Trapecio = false;
 
     mainCanvas.addEventListener("mousemove", function(event) {
+        //MOVIMIENTO DE PREVISUALIZACION DEL CANVAS
         if (PriClick == false) {
             previewCanvas.style.zIndex = 2;
             previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
@@ -84,10 +99,32 @@
                 DibujarCuadrado(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
             }else if (Rectangulo == true){
                 DibujarRectangulo(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+            }else if (Rombo == true){
+                let radio = Math.sqrt(Math.pow((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x, 2) + Math.pow((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y, 2));
+                PoligonoRegular(previewContext, PtInicio.x, PtInicio.y, radio, 4);
+            }else if (Elipse == true){
+                radioX = Math.abs((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x);
+                radioY = Math.abs((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y);
+                DibujarElipse(previewContext, PtInicio.x, PtInicio.y, radioX, radioY);
+            }else if(Poligono == true){
+                let radio = Math.sqrt(Math.pow((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x, 2) + Math.pow((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y, 2));
+                var inputNumeroLados = document.getElementById("numlados");
+                lados = inputNumeroLados.value;
+                PoligonoRegular(previewContext, PtInicio.x, PtInicio.y, radio, lados);
+            }else if(Circulo == true){
+                radio = Math.sqrt(Math.pow((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x, 2) + Math.pow((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y, 2));
+                CirculoBresenham(previewContext, PtInicio.x, PtInicio.y, radio);
+            }else if (LineaDDAs == true){
+                LineaDDA(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+            }else if (Trapecio == true){
+                DibujarTrapecio(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left);
+            }else if (Dibujar== true){
+                previewCanvas.style.zIndex = -1;
             }
              
         }
     });
+
     mainCanvas.addEventListener("click", function(event){
         //OBTENER COORDENADAS
         var  rect = mainCanvas.getBoundingClientRect();
@@ -99,6 +136,7 @@
             PtInicio.x = mouseX;
             PtInicio.y = mouseY;
             PriClick = false;
+            
         }else {
             PtFinal.x = mouseX;
             PtFinal.y = mouseY;
@@ -117,27 +155,21 @@
                 CirculoBresenham(contexto, PtInicio.x, PtInicio.y, radio);
             }else if(Cuadrado == true){
                 DibujarCuadrado(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
-                //GUARDAR LOS DATOS DE LA FIGURA EN LA PILA
-                let figurax = new Figura ("cuadrado",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y)
-                pila1.push(figurax);
-                //console.log("Elemento superior de la pila:", pila1.peek());
             }else if(LineaDDAs == true){
                 LineaDDA(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
-            }else if(LineaBre == true){
-                LineaBresenham(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
-            }else if(LineaBase == true){
-                DibujarLinea(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
             }else if(Dibujar == true){
                 //FALTA AGREGAR ESTE
             }else if(Rectangulo == true){
                 DibujarRectangulo(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
-                let figurax = new Figura ("rectangulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y)
-                pila1.push(figurax);
             }else if(Rombo == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 lados = 4;
                 PoligonoRegular(contexto, PtInicio.x, PtInicio.y, radio, lados);
-
+            }else if (Trapecio == true){
+                DibujarTrapecio(contexto, PtInicio.x, PtInicio.y, PtFinal.x);
+            }else if (Dibujar == true){
+                previewCanvas.style.zIndex = -1;
+                
             }
 
             
@@ -150,90 +182,97 @@
         }
     });
 
+
+    //FUNCIONAMIENTO DE MENUS DE LA BARRA DE HERRAMIENTAS
+    document.getElementById('exportar').addEventListener('click', function () {
+        var exportarMenu = document.getElementById('exportar-menu');
+        var exportarButton = document.getElementById('exportar');
+        if (exportarMenu.style.display === 'none' || exportarMenu.style.display === '') {
+            exportarMenu.style.display = 'block';
+            exportarButton.style.backgroundColor = '#c395cc';
+        } else {
+            exportarMenu.style.display = 'none';
+            exportarButton.style.backgroundColor = '#e8b1f3';
+        }
+    });
+    document.getElementById('formas').addEventListener('click', function () {
+        var formasMenu = document.getElementById('formas-menu');
+        var formasButton = document.getElementById('formas');
+        if (formasMenu.style.display === 'none' || formasMenu.style.display === '') {
+            formasMenu.style.display = 'block';
+            formasButton.style.backgroundColor = '#c395cc';
+        } else {
+            formasMenu.style.display = 'none';
+            formasButton.style.backgroundColor = '#e8b1f3';
+        }
+    });
+    document.getElementById('capas').addEventListener('click', function () {
+        var capaMenu = document.getElementById('capas-menu');
+        var capasButton = document.getElementById('capas');
+        if (capaMenu.style.display === 'none' || capaMenu.style.display === '') {
+            capaMenu.style.display = 'block';
+            capasButton.style.backgroundColor = '#c395cc';
+        } else {
+            capaMenu.style.display = 'none';
+            capasButton.style.backgroundColor = '#e8b1f3';
+        }
+    });
+
+    //LLAMADAS A FUNCIONES DE EXPORTACION
+    document.getElementById('png').addEventListener('click', function () {
+        descargarPNG(mainCanvas, "Imagen");
+    });
+    document.getElementById('pdf').addEventListener('click', function () {
+        descargarPDF(mainCanvas, "pdf");
+    });
+    //FUNCIONAMIENTO DEL LAPIZ NORMAL DEL PAINT
     document.getElementById('lapiz').addEventListener('click', function () {
+        cancelar();
         Dibujar = true;
+        agregarScript();
     });
-    document.getElementById('linea').addEventListener('click', function () {
-        cancelar()
-        LineaBase = true;
-    });
-    document.getElementById('lineaB').addEventListener('click', function () {
-        cancelar()
-        LineaBre = true;
-    });
+    //FUNCIONAMIETO DE LA LINEA 
     document.getElementById('lineaDDA').addEventListener('click', function () {
-        cancelar()
+        cancelar();
         LineaDDAs = true;
     });
     document.getElementById('cuadrado').addEventListener('click', function () {
-        cancelar()
+        cancelar();
         Cuadrado = true;
     });
     document.getElementById('circuloB').addEventListener('click', function () {
-        cancelar()
+        cancelar();
         Circulo = true;
     });
     document.getElementById('poligonoRInput').addEventListener('click', function () {
         document.getElementById('inputPoligono').style.display = 'block';
     });
     document.getElementById('poligonoR').addEventListener('click', function () {
-        cancelar()
+        cancelar();
         Poligono = true;
         document.getElementById('inputPoligono').style.display = 'none';
     });
     document.getElementById('elipse').addEventListener('click', function () {
-        cancelar()
+        cancelar();
         Elipse = true;
     });
     document.getElementById('rectangulo').addEventListener('click', function () {
-        cancelar()
+        cancelar();
         Rectangulo = true;
     });
     document.getElementById('rombo').addEventListener('click', function () {
-        cancelar()
+        cancelar();
         Rombo = true;
     });
-    document.getElementById('ctrlz').addEventListener('click', function () {
-        //console.log("Elemento superior de la pila a borrar:", pila1.peek());
-        let top = pila1.peek();
-        if (top.tipo == "cuadrado"){
-            BorrarFigura(top.co.x1, top.co.y1, top.co.x2, top.co.y2);
-            //COLOCAR EN LA OTRA PILA
-            let figurax = new Figura ("cuadrado", top.co.x1, top.co.y1, top.co.x2, top.co.y2)
-            pila2.push(figurax);
-            //console.log("Elemento superior de la pila de rehacer:", pila2.peek());
-        }else if(top.tipo == "rectangulo"){
-            BorrarFigura(top.co.x1, top.co.y1, top.co.x2, top.co.y2);
-            //COLOCAR EN LA OTRA PILA
-            let figurax = new Figura ("rectangulo", top.co.x1, top.co.y1, top.co.x2, top.co.y2)
-            pila2.push(figurax);
-        }
-        //SACAR DE LA PILA
-        pila1.pop();
+
+    document.getElementById('trapecio').addEventListener('click', function () {
+        cancelar();
+        Trapecio = true;
     });
-    document.getElementById('ctrly').addEventListener('click', function () {
-        //console.log("Elemento superior de la pila a redibujar:", pila2.peek());
-        let top = pila2.peek();
-        if (top.tipo == "cuadrado"){
-            DibujarCuadrado(contexto, top.co.x1, top.co.y1, top.co.x2, top.co.y2);
-            let figurax = new Figura ("cuadrado",top.co.x1, top.co.y1, top.co.x2, top.co.y2)
-            pila1.push(figurax);
-        }else if(top.tipo == "rectangulo"){
-            DibujarRectangulo(contexto, top.co.x1, top.co.y1, top.co.x2, top.co.y2);
-            let figurax = new Figura ("rectangulo",top.co.x1, top.co.y1, top.co.x2, top.co.y2)
-            pila1.push(figurax);
-        }
-        //SACAR DE LA PILA
-        pila2.pop();
-    });
-    document.getElementById('relleno').addEventListener('click', function () {
-        document.getElementById('inputRelleno').style.display = 'block';
-    });
-    document.getElementById('rellenar').addEventListener('click', function () {
-        cancelar()
-        Rellenar = true;
-        document.getElementById('inputRelleno').style.display = 'none';
-    });
+
+
+
+    
 </script>
 
 </html>

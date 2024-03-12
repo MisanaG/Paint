@@ -1,60 +1,38 @@
-//ESTRUCTURA PARA ALMACENAR LAS FIGURAS
-class Figura{
-  constructor(tipo, x1, y1, x2, y2){
-    this.tipo = tipo;
-    this.co = {x1, y1, x2, y2};
-    //this.relleno = relleno;
-    //this.borde = borde;
-  }
-}
-
-//PILA PARA LAS FIGURAS
-class PilaFiguras{
-  constructor(){
-    this.items = [];
-  }
-  push(figura){
-    this.items.push(figura);
-  }
-  pop(){
-    if (this.isEmpty()){
-      return "La pila está vacía";
-    }
-    return this.items.pop();
-  }
-  peek() {
-    if (this.isEmpty()) {
-      return "La pila está vacía";
-    }
-    return this.items[this.items.length - 1];
-  }
-  isEmpty() {
-    return this.items.length === 0;
-  }
-  size() {
-    return this.items.length;
-  }
-  clear() {
-    this.items = [];
-  }
-}
-
-//FUNCION PARA DESACTIVAR FUNCIONAMIENTOS
 function cancelar(){
   document.getElementById('inputPoligono').style.display = 'none';
-  document.getElementById('inputRelleno').style.display = 'none';
   Poligono = false;
   Elipse = false;
   Circulo = false;
-  LineaBre = false;
-  LineaBase = false;
+  /*LineaBre = false;
+  LineaBase = false;*/
   LineaDDAs = false;
   Cuadrado = false;
   Dibujar = false;
   Rectangulo = false;
   Rombo = false;
-  Rellenar = false;
+  Trapecio = false;
+  PriClick = true;
+  previewCanvas.style.zIndex = -1;
+  quitarScript();
 }
+//FUNCION PARA RELLENAR LA FIGURA
+function RellenarFigura(){
+
+}
+//FUNCION PARA EXPORTAR EL LIENZO COMO UNA IMAGEN
+function descargarPNG(context, fileName){
+  var MIME_TYPE = "image/png";
+  var imgURL = context.toDataURL(MIME_TYPE);
+  var dlLink = document.createElement('a');
+  dlLink.download = fileName;
+  dlLink.href = imgURL;
+  dlLink.dataset.downloadurl = [MIME_TYPE, dlLink.download, dlLink.href].join(':');
+  document.body.appendChild(dlLink);
+  dlLink.click();
+  document.body.removeChild(dlLink);
+}
+//FUNCION PARA EXPORTAR EL LIENZO COMO UN PDF
+function descargarPDF(context, fileName){}
 
 //FUNCIONAMIENTO PARA DIBUJAR UNA LINEA POR EL METODO BASICO
 function DibujarLinea(context, X1, Y1, X2, Y2) {
@@ -182,7 +160,6 @@ function DibujarCuadrado(context, X1, Y1, X2, Y2) {
   if ((X2 < X1 && Y2 > Y1) || (X2 > X1 && Y2 > Y1)){
     
     dX = Math.abs(X2 - X1);
-    console.log(dX);
     y2 = Y1 + dX;
     LineaBresenham(context, X1, Y1, X2, Y1);
     LineaBresenham(context, X1, y2, X2, y2);
@@ -209,7 +186,6 @@ function DibujarRectangulo(context, X1, Y1, X2, Y2) {
     LineaDDA(context, X1, Y1, X1, Y2);
     LineaDDA(context, X2, Y2, X2, Y1);
   }else if((X2 > X1 && Y2 < Y1) || (X2 < X1 && Y2 < Y1)){
-    console.log("este es");
     LineaDDA(context, X1, Y1, X2, Y1); 
     LineaDDA(context, X1, Y1, X1, Y2); 
     LineaDDA(context, X2, Y1, X2, Y2); 
@@ -307,8 +283,38 @@ function BorrarFigura(X1, Y1, X2, Y2){
   contexto.clearRect(X1, Y1, X2, Y2);
 }
 
-//FUNCION PARA RELLENAR LA FIGURA
-function RellenarFigura(){
+//FUNCION PARA DIBIJAR EL TRAPECIO
+function DibujarTrapecio(context, X1, Y1, X2){
+  if (X2 < X1){
+    let cx = (X1-X2)/2;
+    let x = cx/2;
+    LineaDDA(context, X1, Y1, X2, Y1);
+    //LineaDDA(context, X1 + cx, Y1, X1 + cx, Y1-cx);
+    LineaDDA(context, X1 - x, Y1 - cx , X2 + x, Y1-cx);
+    LineaDDA(context, X1, Y1, X1 - x, Y1 - cx);
+    LineaDDA(context, X2, Y1, X2 + x, Y1-cx);
+  }else{
+    let cx = (X2-X1)/2;
+    let x = cx/2;
+    LineaDDA(context, X1, Y1, X2, Y1);
+    //LineaDDA(context, X1 + cx, Y1, X1 + cx, Y1-cx);
+    LineaDDA(context, X1 + x, Y1 - cx , X2 - x, Y1-cx);
+    LineaDDA(context, X1, Y1, X1 + x, Y1 - cx);
+    LineaDDA(context, X2, Y1, X2 - x, Y1-cx);
+  }
 
 }
 
+//FUNCIONES PARA ABRIR Y CERRAR EL FUNCIONAMIENTO DEL DIBUJAR LIBRE
+function agregarScript() {
+  var script = document.createElement('script');
+  script.src = 'javascript/dibujar.js'; 
+  script.id = 'miScript';
+  document.head.appendChild(script);
+}
+function quitarScript() {
+  var script = document.getElementById('miScript');
+  if (script) {
+    document.head.removeChild(script);
+  }
+}

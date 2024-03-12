@@ -1,7 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: purple;
+    background-color: #eef1fe;
     text-align: center;
 }
 
@@ -16,32 +16,35 @@ canvas {
     opacity: 0.5;
 }
 .canvasO{
+    position: absolute;
+    top: 130px;
+    left: 83px;
     z-index: 1;
 }
 .menu{
     min-width: 1200 px ;
     min-height: 50px ;
     width: 1200px;
-    background-color: blueviolet;
+    background-color: #e8b1f3;
     text-align: center;
     margin: 0 auto; 
-    
+    border-radius: 25px;
 }
 .menu button, .input button{
-    background-color: plum;
+    background-color: #e8b1f3;
     border: none;
     margin-top: 10px;
     border-radius: 2px;
 }
 .menu button:hover, .input button:hover{
-    background-color: purple;
+    background-color: #c395cc;
 }
 .input{
     min-height: 50px;
     width: 20%;
     padding: 20px;
     border-radius: 20px;
-    background-color: blueviolet;
+    background-color: #e8b1f3;
     z-index: 10;
     position: absolute;
     top: 250px;
@@ -53,8 +56,8 @@ canvas {
     -moz-appearance: none;
     appearance: none;
     background-color: transparent;
-    width: 100px;
-    height: 100px;
+    width: 36px;
+    height: 36px;
     border: none;
     cursor: pointer;
 }
@@ -65,4 +68,24 @@ canvas {
 #Rcolor::-moz-color-swatch {
     border-radius: 50%;
     border: 1px solid #000000;
+}
+.exportar-menu, .formas-menu, .capas-menu{
+    position: absolute;
+    min-height: 50px ;
+    background-color: #e8b1f3;
+    border-radius: 25px;
+    top: 51px;
+}
+.exportar-menu{
+    min-width: 100px;
+    left: 430px;
+}
+.formas-menu{
+    border-radius: 50px;
+    min-width: 200px;  
+    left: 540px;  
+}
+.capas-menu{
+    min-width: 110px;
+    left: 840px;  
 }

@@ -1,52 +1,58 @@
 //GUARDAR EL ELEMENTO Y EL CONTEXTO
-const mainCanvas = document.getElementById("Canvas");
-const context = mainCanvas.getContext("2d");
+/*const mainCanvas = document.getElementById("Canvas");
+const context = mainCanvas.getContext("2d");*/
 
-let initialX;
-let initialY;
 
 const dibujar = (cursorX, cursorY) => {
-  context.beginPath();
-  context.moveTo(initialX, initialY);
-  context.lineWidth = 10;
-  context.strokeStyle = "#000";
-  context.lineCap = "round";
-  context.lineJoin = "round";
-  context.lineTo(cursorX, cursorY);
-  context.stroke();
-  
+  if (!Dibujar) return;
+  contexto.beginPath();
+  contexto.moveTo(initialX, initialY);
+  contexto.lineWidth = 1;
+  contexto.strokeStyle = "#000";
+  contexto.lineCap = "round";
+  contexto.lineJoin = "round";
+  contexto.lineTo(cursorX, cursorY);
+  contexto.stroke();
+
   initialX = cursorX;
   initialY = cursorY;
 };
 
 const mouseDown = (evt) => {
   evt.preventDefault();
-  if ( evt.changedTouches === undefined) {
+  drawing = true;
+  if (evt.changedTouches === undefined) {
     initialX = evt.offsetX;
     initialY = evt.offsetY;
-  }else{
+  } else {
     initialX = evt.changedTouches[0].pageX - correccionX;
     initialY = evt.changedTouches[0].pageY - correccionY;
   }
   dibujar(initialX, initialY);
   mainCanvas.addEventListener("mousemove", mouseMoving);
-  mainCanvas.addEventListener('touchmove', mouseMoving);
+  mainCanvas.addEventListener("touchmove", mouseMoving);
 };
-  
+
 const mouseMoving = (evt) => {
   evt.preventDefault();
-  if ( evt.changedTouches === undefined) {
-    dibujar(evt.offsetX, evt.offsetY);
-  }else{
-    dibujar( evt.changedTouches[0].pageX - correccionX  , evt.changedTouches[0].pageY - correccionY );
+  if (drawing) {
+    if (evt.changedTouches === undefined) {
+      dibujar(evt.offsetX, evt.offsetY);
+    } else {
+      dibujar(
+        evt.changedTouches[0].pageX - correccionX,
+        evt.changedTouches[0].pageY - correccionY
+      );
+    }
   }
 };
 
 const mouseUp = () => {
+  drawing = false;
   mainCanvas.removeEventListener("mousemove", mouseMoving);
   mainCanvas.removeEventListener("touchmove", mouseMoving);
 };
-  
+
 mainCanvas.addEventListener("mousedown", mouseDown);
 mainCanvas.addEventListener("mouseup", mouseUp);
 
