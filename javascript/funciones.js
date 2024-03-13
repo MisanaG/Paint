@@ -1,10 +1,9 @@
 function cancelar(){
   document.getElementById('inputPoligono').style.display = 'none';
+  document.getElementById('inputTexto').style.display = 'none';
   Poligono = false;
   Elipse = false;
   Circulo = false;
-  /*LineaBre = false;
-  LineaBase = false;*/
   LineaDDAs = false;
   Cuadrado = false;
   Dibujar = false;
@@ -14,6 +13,7 @@ function cancelar(){
   PriClick = true;
   previewCanvas.style.zIndex = -1;
   quitarScript();
+  Texto = false;
 }
 //FUNCION PARA RELLENAR LA FIGURA
 function RellenarFigura(){
@@ -23,7 +23,7 @@ function RellenarFigura(){
 function BordesC(context){
   var color = ColorBordes.value;
   context.fillStyle = color;
-  contexto.strokeStyle = color;
+  context.strokeStyle = color;
 }
 //FUNCION PARA EXPORTAR EL LIENZO COMO UNA IMAGEN
 function descargarPNG(context, fileName){
@@ -38,7 +38,13 @@ function descargarPNG(context, fileName){
   document.body.removeChild(dlLink);
 }
 //FUNCION PARA EXPORTAR EL LIENZO COMO UN PDF
-function descargarPDF(context, fileName){}
+function descargarPDF(context, fileName){
+  var imgData = context.toDataURL("image/jpeg", 1.0);
+  var pdf = new jsPDF();
+
+  pdf.addImage(imgData, 'JPEG', 0, 0);
+  pdf.save(fileName + ".pdf");
+}
 
 //FUNCIONAMIENTO PARA DIBUJAR UNA LINEA POR EL METODO BASICO
 function DibujarLinea(context, X1, Y1, X2, Y2) {
@@ -290,25 +296,23 @@ function BorrarFigura(X1, Y1, X2, Y2){
 }
 
 //FUNCION PARA DIBIJAR EL TRAPECIO
-function DibujarTrapecio(context, X1, Y1, X2){
-  if (X2 < X1){
-    let cx = (X1-X2)/2;
-    let x = cx/2;
-    LineaDDA(context, X1, Y1, X2, Y1);
-    //LineaDDA(context, X1 + cx, Y1, X1 + cx, Y1-cx);
-    LineaDDA(context, X1 - x, Y1 - cx , X2 + x, Y1-cx);
-    LineaDDA(context, X1, Y1, X1 - x, Y1 - cx);
-    LineaDDA(context, X2, Y1, X2 + x, Y1-cx);
-  }else{
-    let cx = (X2-X1)/2;
-    let x = cx/2;
-    LineaDDA(context, X1, Y1, X2, Y1);
-    //LineaDDA(context, X1 + cx, Y1, X1 + cx, Y1-cx);
-    LineaDDA(context, X1 + x, Y1 - cx , X2 - x, Y1-cx);
-    LineaDDA(context, X1, Y1, X1 + x, Y1 - cx);
-    LineaDDA(context, X2, Y1, X2 - x, Y1-cx);
+function DibujarTrapecio(context, xc, yc , r){
+  let l = 6;
+  let angulo = (Math.PI * 2) / l;
+  let antx = xc + r;
+  let anty = yc;
+  for (let i = 3; i <= l; i ++){
+    let x = xc + r * Math.cos(i * angulo);
+    let y = yc + r * Math.sin(i * angulo);
+    LineaDDA(context, antx, anty, x, y);
+    antx = x;
+    anty = y;
   }
+  LineaDDA(context, xc - r, yc, xc + r, yc);
+}
 
+function Escribir(context, tx, x, y){
+  context.fillText(tx, x, y);
 }
 
 //FUNCIONES PARA ABRIR Y CERRAR EL FUNCIONAMIENTO DEL DIBUJAR LIBRE
