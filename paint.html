@@ -82,6 +82,10 @@
     //COLOR DE LOS BORDES
     var ColorBordes = document.getElementById('Rcolor');
 
+    //PILA
+    let pila1 = new PilaFiguras();
+    var n = 0;
+
     //PUNTOS DE LA GRAFICA
     let PtInicio = {x: 0, y: 0};
     let PtFinal = {x: 0, y: 0};
@@ -90,6 +94,7 @@
     let initialY;
 
     var PriClick = true;
+
     var Poligono = false;
     var Elipse = false;
     var Circulo = false;
@@ -100,6 +105,10 @@
     var Rombo = false;
     var Trapecio = false;
     var Texto = false;
+
+    var Seleccionar = false;
+    var Relleno = false;
+    var figSelec = 0;
 
     mainCanvas.addEventListener("mousemove", function(event) {
 
@@ -136,6 +145,8 @@
                 previewCanvas.style.zIndex = -1;
             }else if (Texto == true){
                 previewCanvas.style.zIndex = -1; 
+            }else if (Seleccionar == true){
+                
             }
              
         }
@@ -147,6 +158,7 @@
         var mouseX = event.clientX - rect.left;
         var mouseY = event.clientY - rect.top;
 
+        //PONER LOS BORDES DEL COLOR DEL INPUT
         BordesC(contexto);
 
         //DIBUJAR PRIMER PUNTO
@@ -160,38 +172,78 @@
                 tx = text.value;
                 Escribir(contexto, tx, PtInicio.x, PtInicio.y);
                 PriClick = true;
+            }else if (Relleno == true){
+                SeleccionRelleno(PtInicio.x, PtInicio.y);
+                PriClick = true;
             }
         }else {
             PtFinal.x = mouseX;
             PtFinal.y = mouseY;
             previewCanvas.style.zIndex = -1;
+            n ++;
+
             if (Elipse == true){
                 radioX = Math.abs(PtFinal.x - PtInicio.x);
                 radioY = Math.abs(PtFinal.y - PtInicio.y);
                 DibujarElipse(contexto, PtInicio.x, PtInicio.y, radioX, radioY);
+
+                let figurax = new Figura (n, "elipse",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radioX, 0, ColorBordes.value, "white");
+                pila1.push(figurax);
+
             }else if(Poligono == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 var inputNumeroLados = document.getElementById("numlados");
                 lados = inputNumeroLados.value;
                 PoligonoRegular(contexto, PtInicio.x, PtInicio.y, radio, lados);
+
+
+                let figurax = new Figura (n, "poligono",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, lados, ColorBordes.value, "white");
+                pila1.push(figurax);
+
             }else if(Circulo == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 CirculoBresenham(contexto, PtInicio.x, PtInicio.y, radio);
+                
+
+                let figurax = new Figura (n, "circulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 0, ColorBordes.value, "white");
+                pila1.push(figurax);
+
             }else if(Cuadrado == true){
                 DibujarCuadrado(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+
+
+                let figurax = new Figura (n, "cuadrado",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 4, ColorBordes.value, "white");
+                pila1.push(figurax);
+
+
             }else if(LineaDDAs == true){
                 LineaDDA(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
-            }else if(Dibujar == true){
-                //FALTA AGREGAR ESTE
+
+                let figurax = new Figura (n, "linea",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 1, ColorBordes.value, ColorBordes.value);
+                pila1.push(figurax);
+            
             }else if(Rectangulo == true){
                 DibujarRectangulo(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+
+
+                let figurax = new Figura (n, "rectangulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 4, ColorBordes.value, "white")
+                pila1.push(figurax);
+
             }else if(Rombo == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
-                lados = 4;
-                PoligonoRegular(contexto, PtInicio.x, PtInicio.y, radio, lados);
+;
+                PoligonoRegular(contexto, PtInicio.x, PtInicio.y, radio, 4);
+
+                let figurax = new Figura (n, "poligono",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 4, ColorBordes.value, "white");
+                pila1.push(figurax);
+
             }else if (Trapecio == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 DibujarTrapecio(contexto, PtInicio.x, PtInicio.y, radio);
+
+                let figurax = new Figura (n, "trapecio",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 4 , ColorBordes.value, "white");
+                pila1.push(figurax);
+
             }else if (Dibujar == true){
                 previewCanvas.style.zIndex = -1; 
             }
@@ -304,6 +356,16 @@
         document.getElementById('inputTexto').style.display = 'none';
     });
 
+
+    document.getElementById('rellenar').addEventListener('click', function () {
+        cancelar();
+        Relleno = true;
+    });
+
+    document.getElementById('seleccionar').addEventListener('click', function () {
+        cancelar();
+        Seleccionar = true;
+    });
 
     
 </script>
