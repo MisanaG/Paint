@@ -51,6 +51,7 @@ class PilaFiguras{
 function cancelar(){
   document.getElementById('inputPoligono').style.display = 'none';
   document.getElementById('inputTexto').style.display = 'none';
+  document.getElementById('inputArchivo').style.display = 'none';
   Poligono = false;
   Elipse = false;
   Circulo = false;
@@ -717,4 +718,66 @@ function Redibujo (){
         break;
     }
   }
+}
+
+
+//FUNCION PARA GUARDAR LAS FIGURAS COMO UN TXT
+function guardar(pilaFiguras) {
+  let contenido = '';
+  pilaFiguras.items.forEach(figura => {
+    contenido += `Indice: ${figura.indice}, Tipo: ${figura.tipo}, x1: ${figura.co.x1}, y1: ${figura.co.y1}, x2: ${figura.co.x2}, y2: ${figura.co.y2}), Radio: ${figura.r}, Lados: ${figura.l}, Borde: ${figura.cborde}, Relleno: ${figura.crelleno}\n`;
+  });
+  const blob = new Blob([contenido], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'figuras.txt';
+  link.click();
+}
+
+
+//FUNCION PARA ABRIR EL ARCHIVO, CARGAR LOS ELEMENTOS EN LA PILA Y REDIBUJAR LAS FIGURAS
+function abrirArchivo() {
+  const inputArchivo = document.querySelector('input[name="archivosubido"]');
+  const archivo = inputArchivo.files[0];
+  const lector = new FileReader();
+  lector.onload = function (eventoLector) {
+    const contenido = eventoLector.target.result;
+    const figuras = parsearContenidoFiguras(contenido);
+    console.log('Las figuras leídas del archivo son:');
+    console.log(figuras);
+    figuras.forEach(figura => {
+      pila1.push(figura);
+    });
+
+    Redibujo();
+  };
+  lector.readAsText(archivo);
+}
+
+
+//FUNCION PARA OBTENER EL CONTENIDO DEL ARCHIVO TXT
+function parsearContenidoFiguras(contenido) {
+  const lineas = contenido.split('\n');
+  const figuras = [];
+  lineas.forEach((linea, indice) => {
+    const partes = linea.split(',');
+    if (partes.length >= 7) {
+      const indiceParte = partes[0].split(':')[1].trim();
+      const tipoParte = partes[1].split(':')[1].trim();
+      const x1 = parseInt(partes[2].split(':')[1].trim());
+      const y1 = parseInt(partes[3].split(':')[1].trim());
+      const x2 = parseInt(partes[4].split(':')[1].trim());
+      const y2 = parseInt(partes[5].split(':')[1].trim()); 
+      const r = parseFloat(partes[6].split(':')[1].trim());
+      const l = parseInt(partes[7].split(':')[1].trim());
+      const borde = partes[8].split(':')[1].trim();
+      const relleno = partes[9].split(':')[1].trim();
+
+      const figura = new Figura(indiceParte, tipoParte, x1, y1, x2, y2, r, l, borde, relleno);
+      figuras.push(figura);
+    }
+  });
+  return figuras;
 }

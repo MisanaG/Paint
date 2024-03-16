@@ -65,6 +65,11 @@
         <label>Ingrese el texto: </label><br><input type="text" id="msg">
         <button id="textoinput" name="textoinput">Escribir</button>
     </div>
+
+    <div class="input" id="inputArchivo"style="display: none;">
+        <label>Subir archivo</label><br><input type="file" name="archivosubido">
+        <button id="archivoinput" name="archivoinput">Cargar</button>
+    </div>
 </body>
 
 <script>
@@ -308,6 +313,23 @@
     document.getElementById('pdf').addEventListener('click', function () {
         descargarPDF(mainCanvas, "pdf");
     });
+    //METODO QUE MANDA LLAMAR A LA FUNCION PARA GUARDAR LA PILA EN EL ARCHIVO TXT
+    document.getElementById('guardar').addEventListener('click', function () {
+        guardar(pila1);
+    });
+
+
+
+    document.getElementById('abrir').addEventListener('click', function () {
+        cancelar();
+        document.getElementById('inputArchivo').style.display = 'block';
+    });
+    document.getElementById('archivoinput').addEventListener('click', function () {
+        abrirArchivo();
+        document.getElementById('inputArchivo').style.display = 'none';
+    });
+
+
     //FUNCIONAMIENTO DEL LAPIZ NORMAL DEL PAINT
     document.getElementById('lapiz').addEventListener('click', function () {
         cancelar();
@@ -375,6 +397,7 @@
         cancelar();
         Borrar = true;
     });
+
 
     
 </script>
