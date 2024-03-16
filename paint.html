@@ -108,6 +108,7 @@
 
     var Seleccionar = false;
     var Relleno = false;
+    var Borrar = false;
     var figSelec = 0;
 
     mainCanvas.addEventListener("mousemove", function(event) {
@@ -159,7 +160,8 @@
         var mouseY = event.clientY - rect.top;
 
         //PONER LOS BORDES DEL COLOR DEL INPUT
-        BordesC(contexto);
+        var color = ColorBordes.value;
+        BordesC(contexto, color);
 
         //DIBUJAR PRIMER PUNTO
         if (PriClick){
@@ -174,6 +176,9 @@
                 PriClick = true;
             }else if (Relleno == true){
                 SeleccionRelleno(PtInicio.x, PtInicio.y);
+                PriClick = true;
+            }else if (Borrar == true){
+                BorrarFigura(PtInicio.x, PtInicio.y);
                 PriClick = true;
             }
         }else {
@@ -365,6 +370,10 @@
     document.getElementById('seleccionar').addEventListener('click', function () {
         cancelar();
         Seleccionar = true;
+    });
+    document.getElementById('borrador').addEventListener('click', function () {
+        cancelar();
+        Borrar = true;
     });
 
     

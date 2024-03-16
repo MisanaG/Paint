@@ -40,14 +40,11 @@ class PilaFiguras{
   clear() {
     this.items = [];
   }
+  eliminarFigura(indice) {
+    this.items = this.items.filter(figura => figura.indice !== indice);
+    n--;
+  }
 }
-
-//FUNCION PARA SELECCIONAR FIGURA
-function Seleccionar(x, y){
-
-
-}
-
 
 
 //FUNCION PARA DESACTIVAR EL FUNCIONAMIENTO DE LAS FUNCIONES 
@@ -69,13 +66,15 @@ function cancelar(){
   Texto = false;
   Relleno = false;
   Seleccionar = false;
+  Borrar = false;
 }
 
-function BordesC(context){
-  var color = ColorBordes.value;
+function BordesC(context, color){
   context.fillStyle = color;
   context.strokeStyle = color;
 }
+
+
 //FUNCION PARA EXPORTAR EL LIENZO COMO UNA IMAGEN
 function descargarPNG(context, fileName){
   var MIME_TYPE = "image/png";
@@ -96,6 +95,9 @@ function descargarPDF(context, fileName){
   pdf.addImage(imgData, 'JPEG', 0, 0);
   pdf.save(fileName + ".pdf");
 }
+
+
+
 
 //FUNCIONAMIENTO PARA DIBUJAR UNA LINEA POR EL METODO BASICO
 function DibujarLinea(context, X1, Y1, X2, Y2) {
@@ -341,11 +343,6 @@ function PuntosElipse(context,  x, y, xc, yc) {
   context.fillRect(xc - x, yc - y, 1, 1);
 }
 
-//FUNCION QUE BORRA EL RECTANGULO DE LA FIGURA
-function BorrarFigura(X1, Y1, X2, Y2){
-  contexto.clearRect(X1, Y1, X2, Y2);
-}
-
 //FUNCION PARA DIBIJAR EL TRAPECIO
 function DibujarTrapecio(context, xc, yc , r){
   let l = 6;
@@ -367,25 +364,82 @@ function Escribir(context, tx, x, y){
   context.fillText(tx, x, y);
 }
 
-//FUNCIONES PARA ABRIR Y CERRAR EL FUNCIONAMIENTO DEL DIBUJAR LIBRE
-function agregarScript() {
-  var script = document.createElement('script');
-  script.src = 'javascript/dibujar.js'; 
-  script.id = 'miScript';
-  document.head.appendChild(script);
-}
-function quitarScript() {
-  var script = document.getElementById('miScript');
-  if (script) {
-    document.head.removeChild(script);
+
+//FUNCION QUE SELECCIONA Y RELLENA LA FIGURA
+function  SeleccionRelleno(x, y) {
+  let coloreada = null;
+  let t = pila1.size() -1;
+  var color = ColorBordes.value;
+  for (let i = t; i >= 0; i--){
+    let fig = pila1.items[i];
+    let { x1, y1, x2, y2 } = fig.co;
+
+    switch (fig.tipo){
+
+      case 'circulo':
+        let distanciaAlCentro = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro <= fig.r){
+          fig.crelleno = color;
+          pila1.items[i] = fig;
+          console.log(fig);
+          coloreada =  pila1.items[i];
+        }
+        break;
+      case 'rectangulo':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) ||
+        (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          console.log("rectangulo si" + fig.indice)
+          RellenarRectangulo(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, color);
+          fig.crelleno = color;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'cuadrado':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          RellenarCuadrado(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, color); 
+          fig.crelleno = color;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'poligono':
+        let distanciaAlCentro2 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro2 <= fig.r){
+          console.log(fig.co.x1);
+          RellenarPoligonoRegular(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, color)
+          fig.crelleno = color;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'trapecio':
+        let distanciaAlCentro3 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (y <= y1 && distanciaAlCentro3 <= fig.r) {
+          console.log(fig.co.x1);
+          RellenarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r, color)
+          fig.crelleno = color;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'elipse':
+        a = Math.abs(x2 - x1);
+        b = Math.abs(y2 - y1);
+
+        let distanciaAlCentro4 = Math.pow((x - x1) / a, 2) + Math.pow((y - y1) / b, 2);
+        if (distanciaAlCentro4 <= 1){
+          console.log(fig.co.x1);
+          RellenarElipse(contexto, fig.co.x1, fig.co.y1, a, b, color);
+          fig.crelleno = color;
+          pila1.items[i] = fig;
+        }
+        break;
+      
+    }
+    if (coloreada !== null) break;
   }
+  contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+  Redibujo();
+  return
 }
-
-
-
-
-
-
 
 //FUNCION QUE PERMITE RELLENAR EL CONTENIDO DE UN CIRCULO
 function RellenarCirculo(context, xc, yc, r, Color) {
@@ -521,9 +575,28 @@ function RellenarElipse(context, xc, yc, a, b, Color) {
 
 
 
-function  SeleccionRelleno(x, y) {
+//FUNCIONES PARA ABRIR Y CERRAR EL FUNCIONAMIENTO DEL DIBUJAR LIBRE
+function agregarScript() {
+  var script = document.createElement('script');
+  script.src = 'javascript/dibujar.js'; 
+  script.id = 'miScript';
+  document.head.appendChild(script);
+}
+function quitarScript() {
+  var script = document.getElementById('miScript');
+  if (script) {
+    document.head.removeChild(script);
+  }
+}
+
+
+
+
+//FUNCION QUE BORRA LA FIGURA DEL ARREGLO
+function BorrarFigura(x, y){
+  let borrada = null;
   let t = pila1.size() -1;
-  var color = ColorBordes.value;
+  //BordesC(contexto, "#FFFFFF")
   for (let i = t; i >= 0; i--){
     let fig = pila1.items[i];
     let { x1, y1, x2, y2 } = fig.co;
@@ -533,52 +606,115 @@ function  SeleccionRelleno(x, y) {
       case 'circulo':
         let distanciaAlCentro = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
         if (distanciaAlCentro <= fig.r){
-          console.log(fig.co.x1);
-          RellenarCirculo(contexto, fig.co.x1, fig.co.y1, fig.r, color);
+          borrada =  pila1.items[i];
+          pila1.eliminarFigura(fig.indice);
         }
         break;
       case 'rectangulo':
-        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) ||
-        (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
-          console.log("rectangulo si" + fig.indice)
-          RellenarRectangulo(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, color);
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          borrada =  pila1.items[i];
+          pila1.eliminarFigura(fig.indice);
         }
         break;
       case 'cuadrado':
         if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
-          RellenarCuadrado(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, color); 
+          borrada =  pila1.items[i];
+          pila1.eliminarFigura(fig.indice);
         }
         break;
       case 'poligono':
         let distanciaAlCentro2 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
         if (distanciaAlCentro2 <= fig.r){
-          console.log(fig.co.x1);
-          RellenarPoligonoRegular(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, color)
+          borrada =  pila1.items[i];
+          pila1.eliminarFigura(fig.indice);
         }
         break;
       case 'trapecio':
         let distanciaAlCentro3 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
         if (y <= y1 && distanciaAlCentro3 <= fig.r) {
-          console.log(fig.co.x1);
-          RellenarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r, color)
+          borrada =  pila1.items[i];
+          pila1.eliminarFigura(fig.indice);
         }
         break;
       case 'elipse':
         a = Math.abs(x2 - x1);
         b = Math.abs(y2 - y1);
-
         let distanciaAlCentro4 = Math.pow((x - x1) / a, 2) + Math.pow((y - y1) / b, 2);
         if (distanciaAlCentro4 <= 1){
-          radioX = Math.abs(fig.co.x2 - fig.co.x1);
-          radioY = Math.abs(fig.co.y2 - fig.co.y1);
-          console.log(fig.co.x1);
-          RellenarElipse(contexto, fig.co.x1, fig.co.y1, a, b, color);
+          borrada =  pila1.items[i];
+          pila1.eliminarFigura(fig.indice);
         }
         break;
-      
+      case 'linea':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          borrada =  pila1.items[i];
+          pila1.eliminarFigura(fig.indice);
+        }
+      break;
+    }
+    if (borrada !== null) break;
+  }
+  if (borrada !== null) {
+    for (let i = 0; i < pila1.size(); i++) {
+      let fig = pila1.items[i];
+      if (fig.indice > borrada.indice) {
+        fig.indice--; 
+      }
     }
   }
+  contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
 
+  Redibujo();
   return
 }
-
+//FUNCION QUE REDIBUJA TODAS LAS FIGURAS DEL ARREGLO
+function Redibujo (){
+  for (let i = 0; i < pila1.size(); i++) {
+    let fig = pila1.items[i];
+    let { x1, y1, x2, y2 } = fig.co;
+    BordesC(contexto, fig.cborde)
+    switch (fig.tipo){
+      case 'circulo':
+        CirculoBresenham(contexto, fig.co.x1, fig.co.y1, fig.r);
+        if (fig.crelleno !== "white"){
+          RellenarCirculo(contexto, fig.co.x1, fig.co.y1, fig.r, fig.crelleno);
+        }
+        break;
+      case 'rectangulo':
+        DibujarRectangulo(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2);
+          if (fig.crelleno !== "white"){
+            RellenarRectangulo(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, fig.crelleno);
+          }
+        break;
+      case 'cuadrado':
+        DibujarCuadrado(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2);
+          if (fig.crelleno !== "white"){
+            RellenarCuadrado(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, fig.crelleno);
+          }
+        break;
+      case 'poligono':
+        PoligonoRegular(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l,);
+          if (fig.crelleno !== "white"){
+            RellenarPoligonoRegular(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, fig.crelleno);
+          }
+        break;
+      case 'trapecio':
+        DibujarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r);
+          if (fig.crelleno !== "white"){
+            RellenarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, fig.crelleno);
+          }
+        break;
+      case 'elipse':
+        a = Math.abs(x2 - x1);
+        b = Math.abs(y2 - y1);
+        DibujarElipse(contexto, fig.co.x1, fig.co.y1, a, b);
+          if (fig.crelleno !== "white"){
+            RellenarElipse(contexto, fig.co.x1, fig.co.y1, a, b, fig.crelleno);
+          }
+        break;
+      case 'linea':
+        LineaDDA(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2);
+        break;
+    }
+  }
+}
