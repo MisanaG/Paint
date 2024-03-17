@@ -130,6 +130,8 @@
 
     var Tipo ="";
     var aux= 0;
+    var dx = 0;
+    var dy = 0;
 
     mainCanvas.addEventListener("mousemove", function(event) {
 
@@ -188,6 +190,29 @@
                     DibujarElipse(previewContext, PtInicio.x, PtInicio.y, radioX, radioY);
                 }else if (tipo == 'linea'){
                     LineaDDA(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+                }
+                
+            }else if (Mover == true){
+                fig = pila1.items[aux];
+                dx = Math.abs(fig.co.x2 - fig.co.x1);
+                dy = Math.abs(fig.co.y2 - fig.co.y1);
+                if (tipo == 'circulo'){
+
+                    CirculoBresenham(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), fig.r);
+                }else if (tipo == 'rectangulo'){
+                    DibujarRectangulo(previewContext, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, (event.clientX - mainCanvas.getBoundingClientRect().left + dx), (event.clientY - mainCanvas.getBoundingClientRect().top + dy));
+                }else if (tipo == 'cuadrado'){
+                    DibujarCuadrado(previewContext, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, (event.clientX - mainCanvas.getBoundingClientRect().left + dx), (event.clientY - mainCanvas.getBoundingClientRect().top + dy));
+                }else if (tipo == 'poligono'){
+                    PoligonoRegular(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), fig.r, fig.l);
+                }else if (tipo == 'trapecio'){
+                    DibujarTrapecio(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), fig.r);
+                }else if (tipo == 'elipse'){
+                    DibujarElipse(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), dx, dy);
+                }else if (tipo == 'linea'){
+                    dx = fig.co.x2 - fig.co.x1;
+                    dy = fig.co.y2 - fig.co.y1;
+                    LineaDDA(previewContext, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, (event.clientX - mainCanvas.getBoundingClientRect().left + dx), (event.clientY - mainCanvas.getBoundingClientRect().top + dy));
                 }
                 
             }
@@ -251,6 +276,11 @@
                 tipo = coordenadas.tipo;
                 aux = coordenadas.posicion;
                 console.log(PtInicio.x)
+            }else if (Mover == true){
+                let coordenadas = ObtenerCo(PtInicio.x, PtInicio.y);
+                console.log(coordenadas)
+                tipo = coordenadas.tipo;
+                aux = coordenadas.posicion;
             }
         }else {
             PtFinal.x = mouseX;
@@ -336,6 +366,16 @@
                     fig.r = radioX;
                 }
                 
+                pila1.items[aux] = fig;
+                contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+                Redibujo();
+                console.log(pila1)
+            }else if (Mover == true){
+                fig = pila1.items[aux];
+                fig.co.x1 = PtFinal.x;
+                fig.co.y1 = PtFinal.y;
+                fig.co.x2 = PtFinal.x + dx;
+                fig.co.y2 = PtFinal.y + dy;
                 pila1.items[aux] = fig;
                 contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
                 Redibujo();
@@ -512,6 +552,10 @@
         cancelar();
         Escalar = true;
     });
+    document.getElementById('mover').addEventListener('click', function () {
+        cancelar();
+        Mover = true;
+    })
 
     
 </script>
