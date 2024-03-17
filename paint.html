@@ -177,7 +177,16 @@
             if (Texto == true){
                 var text = document.getElementById("msg");
                 tx = text.value;
-                Escribir(contexto, tx, PtInicio.x, PtInicio.y);
+                contexto.fillText(tx, PtInicio.x, PtInicio.y);
+                var medidaTexto = contexto.measureText(tx);
+                var anchuraTexto = medidaTexto.width;
+                PtFinal.x = PtInicio.x + anchuraTexto;
+                PtFinal.y = PtInicio.y + 20;
+
+                n++;
+                let figurax = new Figura (n, "texto", PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 0, ColorBordes.value, tx);
+                pila1.push(figurax);
+
                 PriClick = true;
             }else if (Relleno == true){
                 SeleccionRelleno(PtInicio.x, PtInicio.y);
@@ -206,21 +215,18 @@
                 lados = inputNumeroLados.value;
                 PoligonoRegular(contexto, PtInicio.x, PtInicio.y, radio, lados);
 
-
                 let figurax = new Figura (n, "poligono",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, lados, ColorBordes.value, "white");
                 pila1.push(figurax);
 
             }else if(Circulo == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 CirculoBresenham(contexto, PtInicio.x, PtInicio.y, radio);
-                
 
                 let figurax = new Figura (n, "circulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 0, ColorBordes.value, "white");
                 pila1.push(figurax);
 
             }else if(Cuadrado == true){
                 DibujarCuadrado(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
-
 
                 let figurax = new Figura (n, "cuadrado",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 4, ColorBordes.value, "white");
                 pila1.push(figurax);
@@ -235,13 +241,11 @@
             }else if(Rectangulo == true){
                 DibujarRectangulo(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
 
-
                 let figurax = new Figura (n, "rectangulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 4, ColorBordes.value, "white")
                 pila1.push(figurax);
 
             }else if(Rombo == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
-;
                 PoligonoRegular(contexto, PtInicio.x, PtInicio.y, radio, 4);
 
                 let figurax = new Figura (n, "poligono",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 4, ColorBordes.value, "white");

@@ -651,7 +651,14 @@ function BorrarFigura(x, y){
           borrada =  pila1.items[i];
           pila1.eliminarFigura(fig.indice);
         }
-      break;
+        break;
+      case 'texto':
+
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          borrada =  pila1.items[i];
+          pila1.eliminarFigura(fig.indice);
+        }
+        break;
     }
     if (borrada !== null) break;
   }
@@ -716,6 +723,9 @@ function Redibujo (){
       case 'linea':
         LineaDDA(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2);
         break;
+      case 'texto':
+        Escribir(contexto, fig.crelleno, fig.co.x1, fig.co.y1)
+        break;
     }
   }
 }
@@ -736,7 +746,6 @@ function guardar(pilaFiguras) {
   link.click();
 }
 
-
 //FUNCION PARA ABRIR EL ARCHIVO, CARGAR LOS ELEMENTOS EN LA PILA Y REDIBUJAR LAS FIGURAS
 function abrirArchivo() {
   const inputArchivo = document.querySelector('input[name="archivosubido"]');
@@ -755,7 +764,6 @@ function abrirArchivo() {
   };
   lector.readAsText(archivo);
 }
-
 
 //FUNCION PARA OBTENER EL CONTENIDO DEL ARCHIVO TXT
 function parsearContenidoFiguras(contenido) {
