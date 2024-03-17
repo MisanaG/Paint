@@ -125,6 +125,11 @@
     var Frente = false;
     var Delante = false;
     var Atras= false;
+    var Escalar = false;
+    var Mover = false;
+
+    var Tipo ="";
+    var aux= 0;
 
     mainCanvas.addEventListener("mousemove", function(event) {
 
@@ -161,7 +166,29 @@
                 previewCanvas.style.zIndex = -1;
             }else if (Texto == true){
                 previewCanvas.style.zIndex = -1; 
-            }else if (Seleccionar == true){
+            }else if (Escalar == true){
+                if (tipo == 'circulo'){
+                    radio = Math.sqrt(Math.pow((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x, 2) + Math.pow((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y, 2));
+                    CirculoBresenham(previewContext, PtInicio.x, PtInicio.y, radio);
+                }else if (tipo == 'rectangulo'){
+                    DibujarRectangulo(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+                }else if (tipo == 'cuadrado'){
+                    DibujarCuadrado(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+                }else if (tipo == 'poligono'){
+                    fig = pila1.items[aux];
+                    laux = fig.l;
+                    let radio = Math.sqrt(Math.pow((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x, 2) + Math.pow((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y, 2));
+                    PoligonoRegular(previewContext, PtInicio.x, PtInicio.y, radio, laux);
+                }else if (tipo == 'trapecio'){
+                    let radio = Math.sqrt(Math.pow((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x, 2) + Math.pow((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y, 2));
+                    DibujarTrapecio(previewContext, PtInicio.x, PtInicio.y, radio);
+                }else if (tipo == 'elipse'){
+                    radioX = Math.abs((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x);
+                    radioY = Math.abs((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y);
+                    DibujarElipse(previewContext, PtInicio.x, PtInicio.y, radioX, radioY);
+                }else if (tipo == 'linea'){
+                    LineaDDA(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+                }
                 
             }
              
@@ -216,6 +243,14 @@
             }else if (Atras == true){
                 EnviarAtras(PtInicio.x, PtInicio.y);
                 PriClick = true;
+            }else if (Escalar == true){
+                let coordenadas = ObtenerCo(PtInicio.x, PtInicio.y);
+                console.log(coordenadas)
+                PtInicio.x = coordenadas.x1;
+                PtInicio.y = coordenadas.y1;
+                tipo = coordenadas.tipo;
+                aux = coordenadas.posicion;
+                console.log(PtInicio.x)
             }
         }else {
             PtFinal.x = mouseX;
@@ -282,6 +317,29 @@
 
             }else if (Dibujar == true){
                 previewCanvas.style.zIndex = -1; 
+            }else if (Escalar == true){
+                fig = pila1.items[aux];
+                fig.co.x2 = PtFinal.x;
+                fig.co.y2 = PtFinal.y;
+
+                if (tipo == 'circulo'){
+                    radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
+                    fig.r = radio;  
+                }else if (tipo == 'poligono'){
+                    radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
+                    fig.r = radio; 
+                }else if (tipo == 'trapecio'){
+                    radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
+                    fig.r = radio;
+                }else if (tipo == 'elipse'){
+                    radioX = Math.abs(PtFinal.x - PtInicio.x);
+                    fig.r = radioX;
+                }
+                
+                pila1.items[aux] = fig;
+                contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+                Redibujo();
+                console.log(pila1)
             }
 
             
@@ -449,6 +507,10 @@
     document.getElementById('detras').addEventListener('click', function () {
         cancelar();
         Atras = true;
+    });
+    document.getElementById('escalar').addEventListener('click', function () {
+        cancelar();
+        Escalar = true;
     });
 
     

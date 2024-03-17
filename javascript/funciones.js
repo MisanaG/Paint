@@ -72,6 +72,8 @@ function cancelar(){
   Frente = false;
   Delante = false;
   Atras= false;
+  Escalar = false;
+  Mover = false;
 }
 
 function BordesC(context, color){
@@ -368,6 +370,7 @@ function DibujarTrapecio(context, xc, yc , r){
 function Escribir(context, tx, x, y){
   context.fillText(tx, x, y);
 }
+
 
 
 //FUNCION QUE SELECCIONA Y RELLENA LA FIGURA
@@ -735,6 +738,8 @@ function Redibujo (){
 }
 
 
+
+
 //FUNCION PARA GUARDAR LAS FIGURAS COMO UN TXT
 function guardar(pilaFiguras) {
   let contenido = '';
@@ -967,7 +972,6 @@ function EnviarFondo(x, y){
   return
 }
 
-
 //FUNCION PARA MANDAR ATRAS
 function EnviarAtras(x, y){
   let capa = null;
@@ -1055,6 +1059,7 @@ function EnviarAtras(x, y){
   Redibujo();
   return
 }
+
 //FUNCION PARA MANDAR DELANTE
 function EnviarDelante(x, y){
   let capa = null;
@@ -1141,4 +1146,67 @@ function EnviarDelante(x, y){
 
   Redibujo();
   return
+}
+
+
+
+//FUNCION QUE PERMITE OBTENER LAS COORDENADAS GUARDADAS
+function ObtenerCo(x, y){
+  let t = pila1.size() -1;
+  for (let i = t; i >= 0; i--){
+    let fig = pila1.items[i];
+    let { x1, y1, x2, y2 } = fig.co;
+
+    switch (fig.tipo){
+
+      case 'circulo':
+        let distanciaAlCentro = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro <= fig.r){
+          return { x1: x1, y1: y1, posicion: i , tipo: fig.tipo};
+        }
+        break;
+      case 'rectangulo':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          return { x1: x1, y1: y1, posicion: i, tipo: fig.tipo};
+        }
+        break;
+      case 'cuadrado':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          return { x1: x1, y1: y1, posicion: i, tipo: fig.tipo};
+        }
+        break;
+      case 'poligono':
+        let distanciaAlCentro2 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro2 <= fig.r){
+          return { x1: x1, y1: y1, posicion: i, tipo: fig.tipo};
+        }
+        break;
+      case 'trapecio':
+        let distanciaAlCentro3 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (y <= y1 && distanciaAlCentro3 <= fig.r) {
+          return { x1: x1, y1: y1, posicion: i, tipo: fig.tipo};
+        }
+        break;
+      case 'elipse':
+        a = Math.abs(x2 - x1);
+        b = Math.abs(y2 - y1);
+        let distanciaAlCentro4 = Math.pow((x - x1) / a, 2) + Math.pow((y - y1) / b, 2);
+        if (distanciaAlCentro4 <= 1){
+          return { x1: x1, y1: y1, posicion: i, tipo: fig.tipo};
+        }
+        break;
+      case 'linea':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          return { x1: x1, y1: y1, posicion: i, tipo: fig.tipo};
+        }
+        break;
+      case 'texto':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          return { x1: x1, y1: y1, posicion: i, tipo: fig.tipo};
+        }
+        break;
+    }
+
+  }
+  return null
 }
