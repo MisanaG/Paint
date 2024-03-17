@@ -115,6 +115,10 @@
     var Relleno = false;
     var Borrar = false;
     var figSelec = 0;
+    var Fondo = false;
+    var Frente = false;
+    var Delante = false;
+    var Atras= false;
 
     mainCanvas.addEventListener("mousemove", function(event) {
 
@@ -193,6 +197,18 @@
                 PriClick = true;
             }else if (Borrar == true){
                 BorrarFigura(PtInicio.x, PtInicio.y);
+                PriClick = true;
+            }else if (Fondo == true){
+                EnviarFondo(PtInicio.x, PtInicio.y);
+                PriClick = true;
+            }else if (Frente == true){
+                EnviarFrente(PtInicio.x, PtInicio.y);
+                PriClick = true;
+            }else if (Delante == true){
+                EnviarDelante(PtInicio.x, PtInicio.y);
+                PriClick = true;
+            }else if (Atras == true){
+                EnviarAtras(PtInicio.x, PtInicio.y);
                 PriClick = true;
             }
         }else {
@@ -401,7 +417,22 @@
         cancelar();
         Borrar = true;
     });
-
+    document.getElementById('fondo').addEventListener('click', function () {
+        cancelar();
+        Fondo = true;
+    });
+    document.getElementById('frente').addEventListener('click', function () {
+        cancelar();
+        Frente = true;
+    });
+    document.getElementById('delante').addEventListener('click', function () {
+        cancelar();
+        Delante = true;
+    });
+    document.getElementById('detras').addEventListener('click', function () {
+        cancelar();
+        Atras = true;
+    });
 
     
 </script>

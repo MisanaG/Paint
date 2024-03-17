@@ -68,6 +68,10 @@ function cancelar(){
   Relleno = false;
   Seleccionar = false;
   Borrar = false;
+  Fondo = false;
+  Frente = false;
+  Delante = false;
+  Atras= false;
 }
 
 function BordesC(context, color){
@@ -788,4 +792,353 @@ function parsearContenidoFiguras(contenido) {
     }
   });
   return figuras;
+}
+
+
+//FUNCION PARA TRAER AL FRENTE
+function EnviarFrente(x, y){
+  let capa = null;
+  let t = pila1.size() -1;
+  
+  for (let i = t; i >= 0; i--){
+    let fig = pila1.items[i];
+    let { x1, y1, x2, y2 } = fig.co;
+
+    switch (fig.tipo){
+
+      case 'circulo':
+        let distanciaAlCentro = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro <= fig.r){
+          capa =  pila1.items[i]; 
+          console.log(capa)
+        }
+        break;
+      case 'rectangulo':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'cuadrado':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'poligono':
+        let distanciaAlCentro2 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro2 <= fig.r){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'trapecio':
+        let distanciaAlCentro3 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (y <= y1 && distanciaAlCentro3 <= fig.r) {
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'elipse':
+        a = Math.abs(x2 - x1);
+        b = Math.abs(y2 - y1);
+        let distanciaAlCentro4 = Math.pow((x - x1) / a, 2) + Math.pow((y - y1) / b, 2);
+        if (distanciaAlCentro4 <= 1){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'linea':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'texto':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+    }
+    if (capa !== null) break;
+  }
+  if (capa !== null) {
+    for (let i = 0; i < pila1.size(); i++) {
+      let fig = pila1.items[i];
+      if (fig.indice > capa.indice) {
+        fig.indice--; 
+      }else if (fig.indice == capa.indice){
+        fig.indice = pila1.size()+1; 
+      }
+
+    }
+  }
+  pila1.items.sort((a, b) => a.indice - b.indice);
+  contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+  Redibujo();
+  return
+}
+
+//FUNCION PARA MANDAR AL FONDO
+function EnviarFondo(x, y){
+  let capa = null;
+  let t = pila1.size() -1;
+  
+  for (let i = t; i >= 0; i--){
+    let fig = pila1.items[i];
+    let { x1, y1, x2, y2 } = fig.co;
+
+    switch (fig.tipo){
+
+      case 'circulo':
+        let distanciaAlCentro = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro <= fig.r){
+          capa =  pila1.items[i]; 
+          console.log(capa)
+        }
+        break;
+      case 'rectangulo':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'cuadrado':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'poligono':
+        let distanciaAlCentro2 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro2 <= fig.r){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'trapecio':
+        let distanciaAlCentro3 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (y <= y1 && distanciaAlCentro3 <= fig.r) {
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'elipse':
+        a = Math.abs(x2 - x1);
+        b = Math.abs(y2 - y1);
+        let distanciaAlCentro4 = Math.pow((x - x1) / a, 2) + Math.pow((y - y1) / b, 2);
+        if (distanciaAlCentro4 <= 1){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'linea':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+      case 'texto':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          
+        }
+        break;
+    }
+    if (capa !== null) break;
+  }
+  if (capa !== null) {
+    for (let i = 0; i < pila1.size(); i++) {
+      let fig = pila1.items[i];
+      if (fig.indice > capa.indice) {
+        fig.indice--; 
+      }else if (fig.indice < capa.indice){
+        fig.indice++; 
+      }else if (fig.indice == capa.indice){
+        fig.indice = 1; 
+      }
+
+    }
+  }
+  pila1.items.sort((a, b) => a.indice - b.indice);
+  contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+  Redibujo();
+  return
+}
+
+
+//FUNCION PARA MANDAR ATRAS
+function EnviarAtras(x, y){
+  let capa = null;
+  let t = pila1.size() -1;
+  for (let i = t; i >= 0; i--){
+    let fig = pila1.items[i];
+    let { x1, y1, x2, y2 } = fig.co;
+
+    switch (fig.tipo){
+
+      case 'circulo':
+        let distanciaAlCentro = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro <= fig.r){
+          fig.indice = fig.indice - 1;
+          pila1.items[i] = fig;
+          capa = pila1.items[i];
+        }
+        break;
+      case 'rectangulo':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice - 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'cuadrado':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice - 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'poligono':
+        let distanciaAlCentro2 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro2 <= fig.r){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice - 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'trapecio':
+        let distanciaAlCentro3 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (y <= y1 && distanciaAlCentro3 <= fig.r) {
+          capa =  pila1.items[i];
+          fig.indice = fig.indice - 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'elipse':
+        a = Math.abs(x2 - x1);
+        b = Math.abs(y2 - y1);
+        let distanciaAlCentro4 = Math.pow((x - x1) / a, 2) + Math.pow((y - y1) / b, 2);
+        if (distanciaAlCentro4 <= 1){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice - 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'linea':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice - 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'texto':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice - 1;
+          pila1.items[i] = fig;
+        }
+        break;
+    }
+    if (capa !== null){
+      fig = pila1.items[i-1];
+      fig.indice = fig.indice + 1;
+      pila1.items[i-1] = fig;
+      break;
+    } 
+  }
+
+  pila1.items.sort((a, b) => a.indice - b.indice);
+  contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+  Redibujo();
+  return
+}
+//FUNCION PARA MANDAR DELANTE
+function EnviarDelante(x, y){
+  let capa = null;
+  let t = pila1.size() -1;
+  for (let i = t; i >= 0; i--){
+    let fig = pila1.items[i];
+    let { x1, y1, x2, y2 } = fig.co;
+
+    switch (fig.tipo){
+
+      case 'circulo':
+        let distanciaAlCentro = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro <= fig.r){
+          fig.indice = fig.indice + 1;
+          pila1.items[i] = fig;
+          capa = pila1.items[i];
+        }
+        break;
+      case 'rectangulo':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice + 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'cuadrado':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice + 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'poligono':
+        let distanciaAlCentro2 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (distanciaAlCentro2 <= fig.r){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice + 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'trapecio':
+        let distanciaAlCentro3 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        if (y <= y1 && distanciaAlCentro3 <= fig.r) {
+          capa =  pila1.items[i];
+          fig.indice = fig.indice + 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'elipse':
+        a = Math.abs(x2 - x1);
+        b = Math.abs(y2 - y1);
+        let distanciaAlCentro4 = Math.pow((x - x1) / a, 2) + Math.pow((y - y1) / b, 2);
+        if (distanciaAlCentro4 <= 1){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice + 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'linea':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice + 1;
+          pila1.items[i] = fig;
+        }
+        break;
+      case 'texto':
+        if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
+          capa =  pila1.items[i];
+          fig.indice = fig.indice + 1;
+          pila1.items[i] = fig;
+        }
+        break;
+    }
+    if (capa !== null){
+      fig = pila1.items[i+1];
+      fig.indice = fig.indice - 1;
+      pila1.items[i+1] = fig;
+      break;
+    } 
+  }
+
+  pila1.items.sort((a, b) => a.indice - b.indice);
+  contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+  Redibujo();
+  return
 }
