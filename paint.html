@@ -39,7 +39,13 @@
         <button id="rellenar" name="rellenar"><img src="img/balde.png" alt="Rellenar"></button>
         <input type="color" id="Rcolor" name="Rcolor" value="#000000">
         <button id="borrador" name="borrador"><img src="img/borrador.png" alt="Borrar"></button>
+
         <button id="seleccionar" name="seleccionar"><img src="img/seleccion.png" alt="Seleccionar figura"></button>
+        <div class="selec-menu" id="selec-menu" style="display: none;">
+            <button id="escalar" name="escalar"><img src="img/escalabilidad.png" alt="Escalar figura"></button>
+            <button id="mover" name="mover"><img src="img/mover.png" alt="Mover figura"></button><br>
+            <button id="girar" name="girar"><img src="img/girar.png" alt="Rotar figura"></button>
+        </div>
         
         <button id="capas" name="capas"><img src="img/capa.png" alt="Menu capas"></button>
         <div class="capas-menu" id="capas-menu" style="display: none;">
@@ -321,6 +327,17 @@
         } else {
             capaMenu.style.display = 'none';
             capasButton.style.backgroundColor = '#e8b1f3';
+        }
+    });
+    document.getElementById('seleccionar').addEventListener('click', function () {
+        var selecMenu = document.getElementById('selec-menu');
+        var selecButton = document.getElementById('seleccionar');
+        if (selecMenu.style.display === 'none' || selecMenu.style.display === '') {
+            selecMenu.style.display = 'block';
+            selecButton.style.backgroundColor = '#c395cc';
+        } else {
+            selecMenu.style.display = 'none';
+            selecButton.style.backgroundColor = '#e8b1f3';
         }
     });
 

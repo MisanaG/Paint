@@ -69,23 +69,29 @@ canvas {
     border-radius: 50%;
     border: 1px solid #000000;
 }
-.exportar-menu, .formas-menu, .capas-menu{
+.exportar-menu, .formas-menu, .capas-menu, .selec-menu{
     position: absolute;
     min-height: 50px ;
     background-color: #e8b1f3;
-    border-radius: 25px;
     top: 51px;
 }
 .exportar-menu{
     min-width: 100px;
     left: 430px;
+    border-radius: 12.5px;
 }
 .formas-menu{
-    border-radius: 50px;
-    min-width: 200px;  
+    min-width: 190px;  
     left: 540px;  
+    border-radius: 25px;
 }
 .capas-menu{
     min-width: 110px;
     left: 840px;  
+    border-radius: 25px;
+}
+.selec-menu{
+    min-width: 100px;
+    left: 735px;  
+    border-radius: 25px;
 }
