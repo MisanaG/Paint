@@ -44,6 +44,24 @@ class PilaFiguras{
     this.items = this.items.filter(figura => figura.indice !== indice);
     n--;
   }
+  clone() {
+    const clonedPila = new PilaFiguras();
+    this.items.forEach(figura => {
+      clonedPila.push(new Figura(
+        figura.indice,
+        figura.tipo,
+        figura.co.x1,
+        figura.co.y1,
+        figura.co.x2,
+        figura.co.y2,
+        figura.r,
+        figura.l,
+        figura.cborde,
+        figura.crelleno
+      ));
+    });
+    return clonedPila;
+  }
 }
 
 
@@ -1209,4 +1227,37 @@ function ObtenerCo(x, y){
 
   }
   return null
+}
+
+
+//FUNCION QUE CLONA Y GAURDA LA PILA DE LAS FIGURAS
+function guardarEstado() {
+  historialIndex++;
+  historial = historial.slice(0, historialIndex);
+  let estado = {
+    figuraData: pila1.clone(),
+  };
+  historial.push(estado);
+}
+
+//FUNCION PARA DESHACER
+function deshacer() {
+  if (historialIndex > 0) {
+      historialIndex--;
+      let estado = historial[historialIndex];
+      pila1 = estado.figuraData.clone();
+      contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+      Redibujo();
+  }
+}
+
+//FUNCION PARA REAHACER
+function rehacer() {
+  if (historialIndex < historial.length - 1) {
+      historialIndex++;
+      let estado = historial[historialIndex];
+      pila1 = estado.figuraData.clone();
+      contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+      Redibujo();
+  }
 }

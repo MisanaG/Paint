@@ -89,6 +89,7 @@
     //GUARDAR ELEMENTO Y CONTEXTO DE LA PREVISUALIZACION
     const previewCanvas = document.getElementById("PreviewCanvas");
     const previewContext = previewCanvas.getContext("2d");
+    previewContext.font = "20px Arial";
 
     //COLOR DE LOS BORDES
     var ColorBordes = document.getElementById('Rcolor');
@@ -96,6 +97,10 @@
     //PILA
     let pila1 = new PilaFiguras();
     var n = 0;
+    //HISTORIAL
+    var historial = [];
+    var historialIndex = 0;
+    guardarEstado();
 
     //PUNTOS DE LA GRAFICA
     let PtInicio = {x: 0, y: 0};
@@ -252,24 +257,31 @@
                 pila1.push(figurax);
 
                 PriClick = true;
+                guardarEstado();
             }else if (Relleno == true){
                 SeleccionRelleno(PtInicio.x, PtInicio.y);
                 PriClick = true;
+                guardarEstado();
             }else if (Borrar == true){
                 BorrarFigura(PtInicio.x, PtInicio.y);
                 PriClick = true;
+                guardarEstado();
             }else if (Fondo == true){
                 EnviarFondo(PtInicio.x, PtInicio.y);
                 PriClick = true;
+                guardarEstado();
             }else if (Frente == true){
                 EnviarFrente(PtInicio.x, PtInicio.y);
                 PriClick = true;
+                guardarEstado();
             }else if (Delante == true){
                 EnviarDelante(PtInicio.x, PtInicio.y);
                 PriClick = true;
+                guardarEstado();
             }else if (Atras == true){
                 EnviarAtras(PtInicio.x, PtInicio.y);
                 PriClick = true;
+                guardarEstado();
             }else if (Escalar == true){
                 let coordenadas = ObtenerCo(PtInicio.x, PtInicio.y);
                 console.log(coordenadas)
@@ -278,11 +290,13 @@
                 tipo = coordenadas.tipo;
                 aux = coordenadas.posicion;
                 console.log(PtInicio.x)
+                guardarEstado();
             }else if (Mover == true){
                 let coordenadas = ObtenerCo(PtInicio.x, PtInicio.y);
                 console.log(coordenadas)
                 tipo = coordenadas.tipo;
                 aux = coordenadas.posicion;
+                guardarEstado();
             }
         }else {
             PtFinal.x = mouseX;
@@ -298,6 +312,8 @@
                 let figurax = new Figura (n, "elipse",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radioX, 0, ColorBordes.value, "white");
                 pila1.push(figurax);
 
+                guardarEstado();
+
             }else if(Poligono == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 var inputNumeroLados = document.getElementById("numlados");
@@ -307,6 +323,8 @@
                 let figurax = new Figura (n, "poligono",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, lados, ColorBordes.value, "white");
                 pila1.push(figurax);
 
+                guardarEstado();
+
             }else if(Circulo == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 CirculoBresenham(contexto, PtInicio.x, PtInicio.y, radio);
@@ -314,12 +332,15 @@
                 let figurax = new Figura (n, "circulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 0, ColorBordes.value, "white");
                 pila1.push(figurax);
 
+                guardarEstado();
+
             }else if(Cuadrado == true){
                 DibujarCuadrado(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
 
                 let figurax = new Figura (n, "cuadrado",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 4, ColorBordes.value, "white");
                 pila1.push(figurax);
 
+                guardarEstado();
 
             }else if(LineaDDAs == true){
                 LineaDDA(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
@@ -327,11 +348,16 @@
                 let figurax = new Figura (n, "linea",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 1, ColorBordes.value, ColorBordes.value);
                 pila1.push(figurax);
             
+
+                guardarEstado();
+
             }else if(Rectangulo == true){
                 DibujarRectangulo(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
 
                 let figurax = new Figura (n, "rectangulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 4, ColorBordes.value, "white")
                 pila1.push(figurax);
+
+                guardarEstado();
 
             }else if(Rombo == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
@@ -340,12 +366,16 @@
                 let figurax = new Figura (n, "poligono",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 4, ColorBordes.value, "white");
                 pila1.push(figurax);
 
+                guardarEstado();
+
             }else if (Trapecio == true){
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 DibujarTrapecio(contexto, PtInicio.x, PtInicio.y, radio);
 
                 let figurax = new Figura (n, "trapecio",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 4 , ColorBordes.value, "white");
                 pila1.push(figurax);
+
+                guardarEstado();
 
             }else if (Dibujar == true){
                 previewCanvas.style.zIndex = -1; 
@@ -370,6 +400,7 @@
                 
                 pila1.items[aux] = fig;
                 contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+                guardarEstado();
                 Redibujo();
                 console.log(pila1)
             }else if (Mover == true){
@@ -381,6 +412,7 @@
                 pila1.items[aux] = fig;
                 contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
                 Redibujo();
+                guardarEstado();
                 console.log(pila1)
             }
 
@@ -558,7 +590,13 @@
         cancelar();
         Mover = true;
     })
+    document.getElementById('ctrlz').addEventListener('click', function() {
+        deshacer();
+    });
 
+    document.getElementById('ctrly').addEventListener('click', function() {
+        rehacer();
+    });
     
 </script>
 
