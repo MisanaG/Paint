@@ -19,7 +19,7 @@ function DibujarCuadrado(context, X1, Y1, X2, Y2) {
     }
 }
 
-function RellenarCuadrado2(context, x1, y1, x2, y2, Color) {
+function RellenarCuadrado(context, x1, y1, x2, y2, Color) {
     let lado = Math.abs(x2 - x1);
     let startY = Math.min(y1, y2);
     let endY = startY + lado;
@@ -50,7 +50,19 @@ function DibujarRectangulo(context, X1, Y1, X2, Y2) {
     }
 }
 
+function RellenarRectangulo(context, x1, y1, x2, y2, Color) {
+  let startY = Math.min(y1, y2);
+  let endY = Math.max(y1, y2);
+  let startX = Math.min(x1, x2);
+  let endX = Math.max(x1, x2);
 
+  for (let i = startY; i <= endY; i++) {
+    for (let j = startX; j <= endX; j++) {
+      context.fillStyle = Color;
+      context.fillRect(j, i, 1, 1);
+    }
+  }
+}
 
 
 
@@ -111,7 +123,12 @@ function PoligonoRegular(context, xc, yc , r , l){
     context.fillRect(xc + x, yc - y, 1, 1);
     context.fillRect(xc - x, yc - y, 1, 1);
   }
-  
+  function RellenarElipse(context, xc, yc, a, b, Color) {
+    context.fillStyle = Color;
+    context.beginPath();
+    context.ellipse(xc, yc, a, b, 0, 0, 2 * Math.PI);
+    context.fill();
+  } 
   
 
   function DibujarTrapecio(context, xc, yc , r){

@@ -424,8 +424,8 @@ function DibujarTrapecio(context, xc, yc, r, anguloRotacion) {
   LineaDDA(context, x1, y1, x2, y2);
 }
 
-
-function LineaDDAA(context, X1, Y1, X2, Y2, anguloRotacion) {
+//FUNCION PARA DIBUJAR LA LINEA CON ANGULO
+function LineaDDAA(context, X1, Y1, X2, Y2, angulo) {
   let x = X1, y = Y1;
   const dX = Math.abs(X2 - X1);
   const dY = Math.abs(Y2 - Y1);
@@ -447,14 +447,14 @@ function LineaDDAA(context, X1, Y1, X2, Y2, anguloRotacion) {
     yi *= -1;
   }
 
-  const cosAngle = Math.cos(anguloRotacion);
-  const sinAngle = Math.sin(anguloRotacion);
+  const cosA = Math.cos(angulo);
+  const sinA = Math.sin(angulo);
 
   for (let k = 1; k <= p; k++) {
     x += xi;
     y += yi;
-    const rotatedX = (x - X1) * cosAngle - (y - Y1) * sinAngle + X1;
-    const rotatedY = (x - X1) * sinAngle + (y - Y1) * cosAngle + Y1;
+    const rotatedX = (x - X1) * cosA - (y - Y1) * sinA + X1;
+    const rotatedY = (x - X1) * sinA + (y - Y1) * cosA + Y1;
     context.fillRect(rotatedX, rotatedY, 1, 1);
   }
 }
@@ -495,7 +495,7 @@ function  SeleccionRelleno(x, y) {
         if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) ||
         (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
           console.log("rectangulo si" + fig.indice)
-          RellenarRectangulo(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, color);
+          RellenarRectangulo(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, color, fig.angulo);
           fig.crelleno = color;
           pila1.items[i] = fig;
         }
@@ -513,7 +513,7 @@ function  SeleccionRelleno(x, y) {
         let distanciaAlCentro2 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
         if (distanciaAlCentro2 <= fig.r){
           console.log(fig.co.x1);
-          RellenarPoligonoRegular(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, color)
+          RellenarPoligonoRegular(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, color, fig.angulo)
           fig.crelleno = color;
           pila1.items[i] = fig;
         }
@@ -522,7 +522,7 @@ function  SeleccionRelleno(x, y) {
         let distanciaAlCentro3 = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
         if (y <= y1 && distanciaAlCentro3 <= fig.r) {
           console.log(fig.co.x1);
-          RellenarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r, color)
+          RellenarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r, color, fig.angulo)
           fig.crelleno = color;
           pila1.items[i] = fig;
         }
@@ -534,7 +534,7 @@ function  SeleccionRelleno(x, y) {
         let distanciaAlCentro4 = Math.pow((x - x1) / a, 2) + Math.pow((y - y1) / b, 2);
         if (distanciaAlCentro4 <= 1){
           console.log(fig.co.x1);
-          RellenarElipse(contexto, fig.co.x1, fig.co.y1, a, b, color);
+          RellenarElipse(contexto, fig.co.x1, fig.co.y1, a, b, color, fig.angulo);
           fig.crelleno = color;
           pila1.items[i] = fig;
         }
@@ -561,19 +561,43 @@ function RellenarCirculo(context, xc, yc, r, Color) {
   }
 }
 //FUNCION QUE PERMITE RELLENAR EL CONTENIDO DE UN RECTANGULO
-function RellenarRectangulo(context, x1, y1, x2, y2, Color) {
-  let startY = Math.min(y1, y2);
-  let endY = Math.max(y1, y2);
-  let startX = Math.min(x1, x2);
-  let endX = Math.max(x1, x2);
+function RellenarRectangulo(context, X1, Y1, X2, Y2, Color, angulo) {
+  const centroX = (X1 + X2) / 2;
+  const centroY = (Y1 + Y2) / 2;
+  const puntosRectangulo = [
+    { x: X1, y: Y1 },
+    { x: X2, y: Y1 },
+    { x: X2, y: Y2 },
+    { x: X1, y: Y2 }
+  ];
 
-  for (let i = startY; i <= endY; i++) {
-    for (let j = startX; j <= endX; j++) {
-      context.fillStyle = Color;
-      context.fillRect(j, i, 1, 1);
+  if (angulo !== undefined) {
+    const puntosRotados = rotarFigura(puntosRectangulo, centroX, centroY, angulo);
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    for (let i = 0; i < puntosRotados.length; i++) {
+      const punto = puntosRotados[i];
+      minX = Math.min(minX, punto.x);
+      minY = Math.min(minY, punto.y);
+      maxX = Math.max(maxX, punto.x);
+      maxY = Math.max(maxY, punto.y);
     }
+    context.fillStyle = Color;
+    context.beginPath();
+    context.moveTo(puntosRotados[0].x, puntosRotados[0].y);
+    for (let i = 1; i < puntosRotados.length; i++) {
+      context.lineTo(puntosRotados[i].x, puntosRotados[i].y);
+    }
+    context.closePath();
+    context.fill();
+  } else {
+    context.fillStyle = Color;
+    context.fillRect(X1, Y1, X2 - X1, Y2 - Y1);
   }
 }
+
 //FUNCION PARA RELLENAR EL CONTENIDO DE UN CUADRADO
 function RellenarCuadrado(context, x1, y1, x2, y2, Color, angulo) {
   const centroX = (x1 + x2) / 2;
@@ -604,7 +628,6 @@ function RellenarCuadrado(context, x1, y1, x2, y2, Color, angulo) {
   }
 }
 
-
 //FUNCION PARA OBTENER LOS PUNTOS DENTROS DEL CUADRADO
 function puntoDentroDelCuadrado(vertices, punto) {
   const x = punto.x;
@@ -621,104 +644,109 @@ function puntoDentroDelCuadrado(vertices, punto) {
   return dentro;
 }
 
-
-
-
-
-
-
 //FUNCION PARA RELLENAR EL CONTENIDO DE UN POLIGONO REGULAR
-function RellenarPoligonoRegular(context, xc, yc, r, l, Color) {
-  let angulo = (Math.PI * 2) / l;
-  let antx = xc + r;
-  let anty = yc;
-  let minY = yc;
-  let maxY = yc;
+function RellenarPoligonoRegular(context, xc, yc, r, l, color, anguloRotacion) {
+  context.fillStyle = color;
 
-  for (let i = 1; i <= l; i++) {
-    let x = xc + r * Math.cos(i * angulo);
-    let y = yc + r * Math.sin(i * angulo);
-    if (y < minY) {
-      minY = y;
-    }
-    if (y > maxY) {
-      maxY = y;
-    }
+  let angulo = (Math.PI * 2) / l;
+  const puntosPoligono = [];
+
+  for (let i = 0; i < l; i++) {
+    let x = xc + r * Math.cos(i * angulo + (anguloRotacion || 0));
+    let y = yc + r * Math.sin(i * angulo + (anguloRotacion || 0));
+    puntosPoligono.push({ x: x, y: y });
   }
-for (let y = minY; y <= maxY; y++) {
-    let xIntersects = [];
-    for (let i = 1; i <= l; i++) {
-      let x1 = xc + r * Math.cos((i - 1) * angulo);
-      let y1 = yc + r * Math.sin((i - 1) * angulo);
-      let x2 = xc + r * Math.cos(i * angulo);
-      let y2 = yc + r * Math.sin(i * angulo);
-      if ((y >= y1 && y <= y2) || (y >= y2 && y <= y1)) {
-        let xIntersect = x1 + (y - y1) * (x2 - x1) / (y2 - y1);
-        xIntersects.push(xIntersect);
+
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (let i = 0; i < puntosPoligono.length; i++) {
+    const punto = puntosPoligono[i];
+    minX = Math.min(minX, punto.x);
+    minY = Math.min(minY, punto.y);
+    maxX = Math.max(maxX, punto.x);
+    maxY = Math.max(maxY, punto.y);
+  }
+
+  for (let y = Math.floor(minY); y <= Math.ceil(maxY); y++) {
+    let intersecciones = [];
+    for (let i = 0; i < puntosPoligono.length; i++) {
+      const punto1 = puntosPoligono[i];
+      const punto2 = puntosPoligono[(i + 1) % puntosPoligono.length];
+      if ((punto1.y <= y && punto2.y >= y) || (punto2.y <= y && punto1.y >= y)) {
+        const interseccionX = punto1.x + (y - punto1.y) * (punto2.x - punto1.x) / (punto2.y - punto1.y);
+        intersecciones.push(interseccionX);
       }
     }
-    xIntersects.sort((a, b) => a - b);
-    for (let i = 0; i < xIntersects.length; i += 2) {
-      let x1 = Math.ceil(xIntersects[i]);
-      let x2 = Math.floor(xIntersects[i + 1]);
-      for (let x = x1; x <= x2; x++) {
-        context.fillStyle = Color;
+    intersecciones.sort((a, b) => a - b);
+    for (let i = 0; i < intersecciones.length; i += 2) {
+      const xInicio = Math.ceil(intersecciones[i]);
+      const xFin = Math.floor(intersecciones[i + 1]);
+      for (let x = xInicio; x <= xFin; x++) {
         context.fillRect(x, y, 1, 1);
       }
     }
   }
 }
+
 //FUNCION PARA RELLENAR EL TRAPECIO
-function RellenarTrapecio(context, xc, yc, r, Color) {
+function RellenarTrapecio(context, xc, yc, r, color, anguloRotacion) {
+  context.fillStyle = color;
   let l = 6;
   let angulo = (Math.PI * 2) / l;
-  let antx = xc + r;
-  let anty = yc;
-  let minY = yc + r;
-  let maxY = yc;
+  const puntosPoligono = [];
 
   for (let i = 3; i <= l; i++) {
-    let x = xc + r * Math.cos(i * angulo);
-    let y = yc + r * Math.sin(i * angulo);
-    if (y < minY) {
-      minY = y;
-    }
-    if (y > maxY) {
-      maxY = y;
-    }
+    let x = xc + r * Math.cos(i * angulo + (anguloRotacion || 0));
+    let y = yc + r * Math.sin(i * angulo + (anguloRotacion || 0));
+    puntosPoligono.push({ x: x, y: y });
   }
 
-  for (let y = minY; y <= maxY; y++) {
-    let xIntersects = [];
-    for (let i = 3; i <= l; i++) {
-      let x1 = xc + r * Math.cos((i - 1) * angulo);
-      let y1 = yc + r * Math.sin((i - 1) * angulo);
-      let x2 = xc + r * Math.cos(i * angulo);
-      let y2 = yc + r * Math.sin(i * angulo);
-      if ((y >= y1 && y <= y2) || (y >= y2 && y <= y1)) {
-        let xIntersect = x1 + (y - y1) * (x2 - x1) / (y2 - y1);
-        xIntersects.push(xIntersect);
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (let i = 0; i < puntosPoligono.length; i++) {
+    const punto = puntosPoligono[i];
+    minX = Math.min(minX, punto.x);
+    minY = Math.min(minY, punto.y);
+    maxX = Math.max(maxX, punto.x);
+    maxY = Math.max(maxY, punto.y);
+  }
+
+  for (let y = Math.floor(minY); y <= Math.ceil(maxY); y++) {
+    let intersecciones = [];
+    for (let i = 0; i < puntosPoligono.length; i++) {
+      const punto1 = puntosPoligono[i];
+      const punto2 = puntosPoligono[(i + 1) % puntosPoligono.length];
+      if ((punto1.y <= y && punto2.y >= y) || (punto2.y <= y && punto1.y >= y)) {
+        const interseccionX = punto1.x + (y - punto1.y) * (punto2.x - punto1.x) / (punto2.y - punto1.y);
+        intersecciones.push(interseccionX);
       }
     }
-    xIntersects.sort((a, b) => a - b);
-    for (let i = 0; i < xIntersects.length; i += 2) {
-      let x1 = Math.ceil(xIntersects[i]);
-      let x2 = Math.floor(xIntersects[i + 1]);
-      for (let x = x1; x <= x2; x++) {
-        context.fillStyle = Color;
+    intersecciones.sort((a, b) => a - b);
+    for (let i = 0; i < intersecciones.length; i += 2) {
+      const xInicio = Math.ceil(intersecciones[i]);
+      const xFin = Math.floor(intersecciones[i + 1]);
+      for (let x = xInicio; x <= xFin; x++) {
         context.fillRect(x, y, 1, 1);
       }
     }
   }
 }
-//FUNCION PARA RELLENAR LA ELIPSE
-function RellenarElipse(context, xc, yc, a, b, Color) {
-  context.fillStyle = Color;
-  context.beginPath();
-  context.ellipse(xc, yc, a, b, 0, 0, 2 * Math.PI);
-  context.fill();
-}
 
+//FUNCION PARA RELLENAR LA ELIPSE
+function RellenarElipse(context, xc, yc, a, b, Color, angulo = 0) {
+  context.fillStyle = Color;
+  for (var x = -a; x < a; x++) {
+    for (var y = -b; y < b; y++) {
+        if (Math.pow(x, 2) / Math.pow(a, 2) + Math.pow(y, 2) / Math.pow(b, 2) <= 1) {
+          PuntosElipse(context, x, y, xc, yc, angulo);
+        }
+    }
+  }
+}
 
 
 
@@ -857,7 +885,7 @@ function Redibujo (){
       case 'trapecio':
         DibujarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r, fig.angulo);
           if (fig.crelleno !== "white"){
-            RellenarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, fig.crelleno, fig.angulo);
+            RellenarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r, fig.crelleno, fig.angulo);
           }
         break;
       case 'elipse':
