@@ -132,6 +132,8 @@
     var Atras= false;
     var Escalar = false;
     var Mover = false;
+    var Rotar = false;
+    var angulo = 0;
 
     var Tipo ="";
     var aux= 0;
@@ -146,7 +148,7 @@
             previewCanvas.style.zIndex = 2;
             previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
             if (Cuadrado == true){
-                DibujarCuadrado(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+                DibujarCuadrado(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, 0);
             }else if (Rectangulo == true){
                 DibujarRectangulo(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
             }else if (Rombo == true){
@@ -174,13 +176,16 @@
             }else if (Texto == true){
                 previewCanvas.style.zIndex = -1; 
             }else if (Escalar == true){
+                
                 if (tipo == 'circulo'){
                     radio = Math.sqrt(Math.pow((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x, 2) + Math.pow((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y, 2));
                     CirculoBresenham(previewContext, PtInicio.x, PtInicio.y, radio);
                 }else if (tipo == 'rectangulo'){
                     DibujarRectangulo(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
                 }else if (tipo == 'cuadrado'){
-                    DibujarCuadrado(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+                    fig = pila1.items[aux];
+                    let a = fig.angulo;
+                    DibujarCuadrado(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top), a;
                 }else if (tipo == 'poligono'){
                     fig = pila1.items[aux];
                     laux = fig.l;
@@ -201,13 +206,13 @@
                 fig = pila1.items[aux];
                 dx = Math.abs(fig.co.x2 - fig.co.x1);
                 dy = Math.abs(fig.co.y2 - fig.co.y1);
-                if (tipo == 'circulo'){
 
+                if (tipo == 'circulo'){
                     CirculoBresenham(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), fig.r);
                 }else if (tipo == 'rectangulo'){
                     DibujarRectangulo(previewContext, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, (event.clientX - mainCanvas.getBoundingClientRect().left + dx), (event.clientY - mainCanvas.getBoundingClientRect().top + dy));
                 }else if (tipo == 'cuadrado'){
-                    DibujarCuadrado(previewContext, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, (event.clientX - mainCanvas.getBoundingClientRect().left + dx), (event.clientY - mainCanvas.getBoundingClientRect().top + dy));
+                    DibujarCuadrado(previewContext, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, (event.clientX - mainCanvas.getBoundingClientRect().left + dx), (event.clientY - mainCanvas.getBoundingClientRect().top + dy), fig.angulo);
                 }else if (tipo == 'poligono'){
                     PoligonoRegular(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), fig.r, fig.l);
                 }else if (tipo == 'trapecio'){
@@ -222,7 +227,32 @@
                     previewContext.fillText(fig.crelleno, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top));
                 }
                 
+            }else if (Rotar == true){
+                fig = pila1.items[aux];
+                dx = Math.abs(fig.co.x2 - fig.co.x1);
+                dy = Math.abs(fig.co.y2 - fig.co.y1);
+
+                angulo = calcularAngulo(PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+                console.log(angulo)
+
+                if (tipo == 'rectangulo'){
+                    DibujarRectangulo(previewContext, fig.co.x1, fig.co.y1, fig.co.x2 , fig.co.y2, angulo);
+                }else if (tipo == 'cuadrado'){
+                    DibujarCuadrado(previewContext, fig.co.x1, fig.co.y1, fig.co.x2 , fig.co.y2, angulo);
+                }else if (tipo == 'poligono'){
+                    PoligonoRegular(previewContext, fig.co.x1, fig.co.y1, fig.r, fig.l, angulo);
+                }else if (tipo == 'trapecio'){
+                    DibujarTrapecio(previewContext, fig.co.x1, fig.co.y1, fig.r, angulo);
+                }else if (tipo == 'elipse'){
+                    DibujarElipse(previewContext, fig.co.x1, fig.co.y1, dx, dy, angulo);
+                }else if (tipo == 'linea'){
+                    dx = fig.co.x2 - fig.co.x1;
+                    dy = fig.co.y2 - fig.co.y1;
+                    LineaDDAA(previewContext, fig.co.x1, fig.co.y1, fig.co.x2 , fig.co.y2, angulo);
+                }
+                
             }
+
              
         }
     });
@@ -253,7 +283,7 @@
                 PtFinal.y = PtInicio.y + 20;
 
                 n++;
-                let figurax = new Figura (n, "texto", PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 0, ColorBordes.value, tx);
+                let figurax = new Figura (n, "texto", PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 0, ColorBordes.value, tx, 0);
                 pila1.push(figurax);
 
                 PriClick = true;
@@ -289,11 +319,18 @@
                 PtInicio.y = coordenadas.y1;
                 tipo = coordenadas.tipo;
                 aux = coordenadas.posicion;
-                console.log(PtInicio.x)
                 guardarEstado();
             }else if (Mover == true){
                 let coordenadas = ObtenerCo(PtInicio.x, PtInicio.y);
                 console.log(coordenadas)
+                tipo = coordenadas.tipo;
+                aux = coordenadas.posicion;
+                guardarEstado();
+            }else if (Rotar == true){
+                let coordenadas = ObtenerCo(PtInicio.x, PtInicio.y);
+                console.log(coordenadas)
+                PtInicio.x = coordenadas.x1;
+                PtInicio.y = coordenadas.y1;
                 tipo = coordenadas.tipo;
                 aux = coordenadas.posicion;
                 guardarEstado();
@@ -309,7 +346,7 @@
                 radioY = Math.abs(PtFinal.y - PtInicio.y);
                 DibujarElipse(contexto, PtInicio.x, PtInicio.y, radioX, radioY);
 
-                let figurax = new Figura (n, "elipse",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radioX, 0, ColorBordes.value, "white");
+                let figurax = new Figura (n, "elipse",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radioX, 0, ColorBordes.value, "white", 0);
                 pila1.push(figurax);
 
                 guardarEstado();
@@ -320,7 +357,7 @@
                 lados = inputNumeroLados.value;
                 PoligonoRegular(contexto, PtInicio.x, PtInicio.y, radio, lados);
 
-                let figurax = new Figura (n, "poligono",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, lados, ColorBordes.value, "white");
+                let figurax = new Figura (n, "poligono",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, lados, ColorBordes.value, "white", 0);
                 pila1.push(figurax);
 
                 guardarEstado();
@@ -329,15 +366,15 @@
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 CirculoBresenham(contexto, PtInicio.x, PtInicio.y, radio);
 
-                let figurax = new Figura (n, "circulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 0, ColorBordes.value, "white");
+                let figurax = new Figura (n, "circulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 0, ColorBordes.value, "white", 0);
                 pila1.push(figurax);
 
                 guardarEstado();
 
             }else if(Cuadrado == true){
-                DibujarCuadrado(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
+                DibujarCuadrado(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0);
 
-                let figurax = new Figura (n, "cuadrado",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 4, ColorBordes.value, "white");
+                let figurax = new Figura (n, "cuadrado",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 4, ColorBordes.value, "white", 0);
                 pila1.push(figurax);
 
                 guardarEstado();
@@ -345,7 +382,7 @@
             }else if(LineaDDAs == true){
                 LineaDDA(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
 
-                let figurax = new Figura (n, "linea",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 1, ColorBordes.value, ColorBordes.value);
+                let figurax = new Figura (n, "linea",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 1, ColorBordes.value, ColorBordes.value, 0);
                 pila1.push(figurax);
             
 
@@ -354,7 +391,7 @@
             }else if(Rectangulo == true){
                 DibujarRectangulo(contexto, PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y);
 
-                let figurax = new Figura (n, "rectangulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 4, ColorBordes.value, "white")
+                let figurax = new Figura (n, "rectangulo",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, 0, 4, ColorBordes.value, "white", 0)
                 pila1.push(figurax);
 
                 guardarEstado();
@@ -363,7 +400,7 @@
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 PoligonoRegular(contexto, PtInicio.x, PtInicio.y, radio, 4);
 
-                let figurax = new Figura (n, "poligono",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 4, ColorBordes.value, "white");
+                let figurax = new Figura (n, "poligono",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 4, ColorBordes.value, "white",0);
                 pila1.push(figurax);
 
                 guardarEstado();
@@ -372,7 +409,7 @@
                 radio = Math.sqrt(Math.pow(PtFinal.x - PtInicio.x, 2) + Math.pow(PtFinal.y - PtInicio.y, 2));
                 DibujarTrapecio(contexto, PtInicio.x, PtInicio.y, radio);
 
-                let figurax = new Figura (n, "trapecio",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 4 , ColorBordes.value, "white");
+                let figurax = new Figura (n, "trapecio",PtInicio.x, PtInicio.y, PtFinal.x, PtFinal.y, radio, 4 , ColorBordes.value, "white",0);
                 pila1.push(figurax);
 
                 guardarEstado();
@@ -414,6 +451,16 @@
                 Redibujo();
                 guardarEstado();
                 console.log(pila1)
+            }else if (Rotar == true){
+                fig = pila1.items[aux];
+                fig.angulo = angulo;
+
+                pila1.items[aux] = fig;
+                contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+                Redibujo();
+                guardarEstado();
+                console.log(pila1)
+                
             }
 
             
@@ -423,6 +470,7 @@
             PtFinal = {x: 0, y: 0};
             PriClick = true;
             previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+            angulo= 0;
         }
     });
 
@@ -589,6 +637,10 @@
     document.getElementById('mover').addEventListener('click', function () {
         cancelar();
         Mover = true;
+    })
+    document.getElementById('girar').addEventListener('click', function () {
+        cancelar();
+        Rotar = true;
     })
     document.getElementById('ctrlz').addEventListener('click', function() {
         deshacer();

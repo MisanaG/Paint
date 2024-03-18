@@ -1,6 +1,6 @@
 //ESTRUCTURA DE DATOS DE LAS FIGURAS
 class Figura{
-  constructor(posicion, tipo, x1, y1, x2, y2, r, l, borde, relleno){
+  constructor(posicion, tipo, x1, y1, x2, y2, r, l, borde, relleno, angulo){
     this.indice = posicion;
     this.tipo = tipo;
     this.co = {x1, y1, x2, y2};
@@ -8,6 +8,7 @@ class Figura{
     this.l = l;
     this.crelleno = relleno;
     this.cborde = borde;
+    this.angulo = angulo;
   }
 }
 
@@ -57,7 +58,8 @@ class PilaFiguras{
         figura.r,
         figura.l,
         figura.cborde,
-        figura.crelleno
+        figura.crelleno,
+        figura.angulo
       ));
     });
     return clonedPila;
@@ -92,6 +94,7 @@ function cancelar(){
   Atras= false;
   Escalar = false;
   Mover = false;
+  Rotar = false;
 }
 
 function BordesC(context, color){
@@ -244,44 +247,70 @@ function LineaDDA(context, X1, Y1, X2, Y2){
   }
 }
 
-//FUNCIONAMIENTO PARA DIBUJAR EL CUADRADO
-function DibujarCuadrado(context, X1, Y1, X2, Y2) {
-  context.lineWidth = 1;
-  if ((X2 < X1 && Y2 > Y1) || (X2 > X1 && Y2 > Y1)){
-    
-    dX = Math.abs(X2 - X1);
-    y2 = Y1 + dX;
-    LineaBresenham(context, X1, Y1, X2, Y1);
-    LineaBresenham(context, X1, y2, X2, y2);
-    LineaBresenham(context, X1, Y1, X1, y2);
-    LineaBresenham(context, X2, y2, X2, Y1);
-  }else if((X2 > X1 && Y2 < Y1) || (X2 < X1 && Y2 < Y1)){
-      
-    dX = Math.abs(X2 - X1);
-    y1 = Y1 - dX;
-    LineaBresenham(context, X1, Y1, X2, Y1); 
-    LineaBresenham(context, X1, Y1, X1, y1); 
-    LineaBresenham(context, X2, Y1, X2, y1); 
-    LineaBresenham(context, X1, y1, X2, y1);   
+//FUNCION PARA DIBUJAR EL CUADRADO
+function DibujarCuadrado(context, X1, Y1, X2, Y2, angulo) {
+  const lado = Math.abs(X2 - X1);
+  const centroX = (X1 + X2) / 2;
+  const centroY = (Y1 + Y2) / 2;
+
+  const puntosCuadrado = [
+    { x: centroX - lado / 2, y: centroY - lado / 2 },
+    { x: centroX + lado / 2, y: centroY - lado / 2 },
+    { x: centroX + lado / 2, y: centroY + lado / 2 },
+    { x: centroX - lado / 2, y: centroY + lado / 2 }
+  ];
+  
+  if (angulo !== undefined) {
+    const puntosRotados = rotarFigura(puntosCuadrado, centroX, centroY, angulo);
+    for (let i = 0; i < puntosRotados.length; i++) {
+      const punto = puntosRotados[i];
+      const puntoSiguiente = puntosRotados[(i + 1) % puntosRotados.length];
+      LineaDDA(context, punto.x, punto.y, puntoSiguiente.x, puntoSiguiente.y);
+    }
+  } else {
+    for (let i = 0; i < puntosCuadrado.length; i++) {
+      const punto = puntosCuadrado[i];
+      const puntoSiguiente = puntosCuadrado[(i + 1) % puntosCuadrado.length];
+      LineaDDA(context, punto.x, punto.y, puntoSiguiente.x, puntoSiguiente.y);
+    }
   }
 }
 
 //FUNCIONAMIENTO PARA HACER RECTANGULOS
-function DibujarRectangulo(context, X1, Y1, X2, Y2) {
+function DibujarRectangulo(context, X1, Y1, X2, Y2, angulo) {
   context.lineWidth = 1;
-
-  if ((X2 < X1 && Y2 > Y1) || (X2 > X1 && Y2 > Y1)){    
-    LineaDDA(context, X1, Y1, X2, Y1);
-    LineaDDA(context, X1, Y2, X2, Y2);
-    LineaDDA(context, X1, Y1, X1, Y2);
-    LineaDDA(context, X2, Y2, X2, Y1);
-  }else if((X2 > X1 && Y2 < Y1) || (X2 < X1 && Y2 < Y1)){
-    LineaDDA(context, X1, Y1, X2, Y1); 
-    LineaDDA(context, X1, Y1, X1, Y2); 
-    LineaDDA(context, X2, Y1, X2, Y2); 
-    LineaDDA(context, X1, Y2, X2, Y2);   
+  const centroX = (X1 + X2) / 2;
+  const centroY = (Y1 + Y2) / 2;
+  const puntosRectangulo = [
+    { x: X1, y: Y1 },
+    { x: X2, y: Y1 },
+    { x: X2, y: Y2 },
+    { x: X1, y: Y2 }
+  ];
+  
+  if (angulo !== undefined) {
+    const puntosRotados = rotarFigura(puntosRectangulo, centroX, centroY, angulo);
+    // Dibujar el rectángulo rotado
+    for (let i = 0; i < puntosRotados.length; i++) {
+      const punto = puntosRotados[i];
+      const puntoSiguiente = puntosRotados[(i + 1) % puntosRotados.length];
+      LineaDDA(context, punto.x, punto.y, puntoSiguiente.x, puntoSiguiente.y);
+    }
+  } else {
+    if ((X2 < X1 && Y2 > Y1) || (X2 > X1 && Y2 > Y1)){    
+      LineaDDA(context, X1, Y1, X2, Y1);
+      LineaDDA(context, X1, Y2, X2, Y2);
+      LineaDDA(context, X1, Y1, X1, Y2);
+      LineaDDA(context, X2, Y2, X2, Y1);
+    } else if((X2 > X1 && Y2 < Y1) || (X2 < X1 && Y2 < Y1)){
+      LineaDDA(context, X1, Y1, X2, Y1); 
+      LineaDDA(context, X1, Y1, X1, Y2); 
+      LineaDDA(context, X2, Y1, X2, Y2); 
+      LineaDDA(context, X1, Y2, X2, Y2);   
+    }
   }
 }
+
 //FUNCIONAMIENTO PARA DIBUJAR EL CIRCULO USANDO EL ALGORITMO DE BRESENHAM
 function CirculoBresenham(context, xc , yc, r){
   let x = 0;
@@ -314,27 +343,26 @@ function CirculoBresenham(context, xc , yc, r){
 }
 
 //FUNCIONAMIENTO PARA DIBIJAR UN POLIGONO REGULAR
-function PoligonoRegular(context, xc, yc , r , l){
+function PoligonoRegular(context, xc, yc, r, l, anguloRotacion) {
+  context.lineWidth = 1;
+
   let angulo = (Math.PI * 2) / l;
-  let antx = xc + r;
-  let anty = yc;
-  for (let i = 1; i <= l; i ++){
-    let x = xc + r * Math.cos(i * angulo);
-    let y = yc + r * Math.sin(i * angulo);
-    LineaDDA(context, antx, anty, x, y);
-    antx = x;
-    anty = y;
+
+  for (let i = 0; i < l; i++) {
+    let x1 = xc + r * Math.cos(i * angulo + (anguloRotacion || 0));
+    let y1 = yc + r * Math.sin(i * angulo + (anguloRotacion || 0));
+    let x2 = xc + r * Math.cos((i + 1) * angulo + (anguloRotacion || 0));
+    let y2 = yc + r * Math.sin((i + 1) * angulo + (anguloRotacion || 0));
+    LineaDDA(context, x1, y1, x2, y2);
   }
 }
 
 //FUNCIONAMIENTO PARA DIBUJAR UNA ELIPSE
-function DibujarElipse(context, xc, yc, a, b) {
+function DibujarElipse(context, xc, yc, a, b, angulo = 0) {
   var x = 0;
   var y = b;    
-  
   var px = Math.round(Math.pow(b, 2) - Math.pow(a, 2) * b + 0.25 * Math.pow(a, 2));
-  PuntosElipse(context, x, y, xc, yc);
-  
+  PuntosElipse(context, x, y, xc, yc, angulo);
   while (Math.pow(b, 2) * x < Math.pow(a, 2)* y) {
     x++;
     if (px < 0) {
@@ -343,11 +371,9 @@ function DibujarElipse(context, xc, yc, a, b) {
       y--;
       px += 2 * Math.pow(b, 2) * x - 2 * Math.pow(a, 2)* y + Math.pow(b, 2);
     }
-    PuntosElipse(context, x, y, xc, yc);
+    PuntosElipse(context, x, y, xc, yc, angulo);
   }
-  
   var py = Math.round(Math.pow(b, 2) * (x + 0.5) * (x + 0.5) + Math.pow(a, 2) * (y - 1) * (y - 1) - Math.pow(a, 2) * Math.pow(b, 2));
-  
   while (y > 0) {
     y--;
     if (py < 0) {
@@ -356,33 +382,87 @@ function DibujarElipse(context, xc, yc, a, b) {
     } else {
       py += -2 * Math.pow(a, 2)* y + Math.pow(a, 2);
     }
-    PuntosElipse(context, x, y, xc, yc);
+    PuntosElipse(context, x, y, xc, yc, angulo);
   }
 }
 
 //FUNCION QUE DIBUJA LOS PUNTO DE LA ELIPSE
-function PuntosElipse(context,  x, y, xc, yc) {
-  context.fillRect(xc + x, yc + y, 1, 1);
-  context.fillRect(xc - x, yc + y, 1, 1);
-  context.fillRect(xc + x, yc - y, 1, 1);
-  context.fillRect(xc - x, yc - y, 1, 1);
+function PuntosElipse(context,  x, y, xc, yc, angulo) {
+  const cosA = Math.cos(angulo);
+  const sinA = Math.sin(angulo);
+  const rotarX1 = xc + (x * cosA - y * sinA);
+  const rotarY1 = yc + (x * sinA + y * cosA);
+  const rotarX2 = xc + (-x * cosA - y * sinA);
+  const rotarY2 = yc + (-x * sinA + y * cosA);
+  const rotarX3 = xc + (x * cosA + y * sinA);
+  const rotarY3 = yc + (x * sinA - y * cosA);
+  const rotarX4 = xc + (-x * cosA + y * sinA);
+  const rotarY4 = yc + (-x * sinA - y * cosA);
+  context.fillRect(rotarX1, rotarY1, 1, 1);
+  context.fillRect(rotarX2, rotarY2, 1, 1);
+  context.fillRect(rotarX3, rotarY3, 1, 1);
+  context.fillRect(rotarX4, rotarY4, 1, 1);
 }
 
 //FUNCION PARA DIBIJAR EL TRAPECIO
-function DibujarTrapecio(context, xc, yc , r){
+function DibujarTrapecio(context, xc, yc, r, anguloRotacion) {
   let l = 6;
   let angulo = (Math.PI * 2) / l;
-  let antx = xc + r;
-  let anty = yc;
-  for (let i = 3; i <= l; i ++){
-    let x = xc + r * Math.cos(i * angulo);
-    let y = yc + r * Math.sin(i * angulo);
-    LineaDDA(context, antx, anty, x, y);
-    antx = x;
-    anty = y;
+
+  for (let i = 3; i < l; i++) {
+    let x1 = xc + r * Math.cos(i * angulo + (anguloRotacion || 0));
+    let y1 = yc + r * Math.sin(i * angulo + (anguloRotacion || 0));
+    let x2 = xc + r * Math.cos((i + 1) * angulo + (anguloRotacion || 0));
+    let y2 = yc + r * Math.sin((i + 1) * angulo + (anguloRotacion || 0));
+    LineaDDA(context, x1, y1, x2, y2);
   }
-  LineaDDA(context, xc - r, yc, xc + r, yc);
+
+  let x1 = xc - r * Math.cos(anguloRotacion || 0);
+  let y1 = yc - r * Math.sin(anguloRotacion || 0);
+  let x2 = xc + r * Math.cos(anguloRotacion || 0);
+  let y2 = yc + r * Math.sin(anguloRotacion || 0);
+  LineaDDA(context, x1, y1, x2, y2);
 }
+
+
+function LineaDDAA(context, X1, Y1, X2, Y2, anguloRotacion) {
+  let x = X1, y = Y1;
+  const dX = Math.abs(X2 - X1);
+  const dY = Math.abs(Y2 - Y1);
+  let p, xi, yi;
+
+  if (dX > dY) {
+    p = dX;
+  } else {
+    p = dY;
+  }
+
+  xi = dX / p;
+  yi = dY / p;
+
+  if (X1 > X2) {
+    xi *= -1;
+  }
+  if (Y1 > Y2) {
+    yi *= -1;
+  }
+
+  const cosAngle = Math.cos(anguloRotacion);
+  const sinAngle = Math.sin(anguloRotacion);
+
+  for (let k = 1; k <= p; k++) {
+    x += xi;
+    y += yi;
+    const rotatedX = (x - X1) * cosAngle - (y - Y1) * sinAngle + X1;
+    const rotatedY = (x - X1) * sinAngle + (y - Y1) * cosAngle + Y1;
+    context.fillRect(rotatedX, rotatedY, 1, 1);
+  }
+}
+
+
+
+
+
 
 //FUNCION PARA ESCRIBIR EL TEXTO
 function Escribir(context, tx, x, y){
@@ -421,8 +501,10 @@ function  SeleccionRelleno(x, y) {
         }
         break;
       case 'cuadrado':
+        
         if ((x >= x1 && x <= x2 && y >= y1 && y <= y2) || (x >= x2 && x <= x1 && y >= y2 && y <= y1) || (x >= x1 && x <= x2 && y <= y1 && y >= y2) || (x >= x2 && x <= x1 && y <= y2 && y >= y1)){
-          RellenarCuadrado(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, color); 
+          console.log("kzn")
+          RellenarCuadrado(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, color, fig.angulo); 
           fig.crelleno = color;
           pila1.items[i] = fig;
         }
@@ -493,19 +575,58 @@ function RellenarRectangulo(context, x1, y1, x2, y2, Color) {
   }
 }
 //FUNCION PARA RELLENAR EL CONTENIDO DE UN CUADRADO
-function RellenarCuadrado(context, x1, y1, x2, y2, Color) {
-  let lado = Math.abs(x2 - x1);
-  let startY = Math.min(y1, y2);
-  let endY = startY + lado;
-  let startX = Math.min(x1, x2);
-  let endX = startX + lado;
-  for (let i = startY; i <= endY; i++) {
-    for (let j = startX; j <= endX; j++) {
-      context.fillStyle = Color;
-      context.fillRect(j, i, 1, 1);
+function RellenarCuadrado(context, x1, y1, x2, y2, Color, angulo) {
+  const centroX = (x1 + x2) / 2;
+  const centroY = (y1 + y2) / 2;
+  const lado = Math.abs(x2 - x1) / 2;
+  const puntosCuadrado = [
+    { x: centroX - lado, y: centroY - lado },
+    { x: centroX + lado, y: centroY - lado },
+    { x: centroX + lado, y: centroY + lado },
+    { x: centroX - lado, y: centroY + lado }
+  ];
+  const puntosRotados = rotarFigura(puntosCuadrado, centroX, centroY, angulo);
+
+  const coordenadasX = puntosRotados.map(punto => punto.x);
+  const coordenadasY = puntosRotados.map(punto => punto.y);
+  const minX = Math.min(...coordenadasX);
+  const maxX = Math.max(...coordenadasX);
+  const minY = Math.min(...coordenadasY);
+  const maxY = Math.max(...coordenadasY);
+
+  for (let i = Math.floor(minY) + 1; i < Math.ceil(maxY); i++) {
+    for (let j = Math.floor(minX) + 1; j < Math.ceil(maxX); j++) {
+      if (puntoDentroDelCuadrado(puntosRotados, { x: j, y: i })) {
+        context.fillStyle = Color;
+        context.fillRect(j, i, 1, 1);
+      }
     }
   }
 }
+
+
+//FUNCION PARA OBTENER LOS PUNTOS DENTROS DEL CUADRADO
+function puntoDentroDelCuadrado(vertices, punto) {
+  const x = punto.x;
+  const y = punto.y;
+  let dentro = false;
+  for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+    const xi = vertices[i].x;
+    const yi = vertices[i].y;
+    const xj = vertices[j].x;
+    const yj = vertices[j].y;
+    const interseccion = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (interseccion) dentro = !dentro;
+  }
+  return dentro;
+}
+
+
+
+
+
+
+
 //FUNCION PARA RELLENAR EL CONTENIDO DE UN POLIGONO REGULAR
 function RellenarPoligonoRegular(context, xc, yc, r, l, Color) {
   let angulo = (Math.PI * 2) / l;
@@ -696,12 +817,14 @@ function BorrarFigura(x, y){
     }
   }
   contexto.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-
+  
   Redibujo();
   return
 }
 //FUNCION QUE REDIBUJA TODAS LAS FIGURAS DEL ARREGLO
 function Redibujo (){
+  contexto.fillStyle = "white";
+  contexto.fillRect(0, 0, mainCanvas.width, mainCanvas.height);
   for (let i = 0; i < pila1.size(); i++) {
     let fig = pila1.items[i];
     let { x1, y1, x2, y2 } = fig.co;
@@ -714,39 +837,39 @@ function Redibujo (){
         }
         break;
       case 'rectangulo':
-        DibujarRectangulo(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2);
+        DibujarRectangulo(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, fig.angulo);
           if (fig.crelleno !== "white"){
-            RellenarRectangulo(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, fig.crelleno);
+            RellenarRectangulo(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, fig.crelleno, fig.angulo);
           }
         break;
       case 'cuadrado':
-        DibujarCuadrado(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2);
+        DibujarCuadrado(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, fig.angulo);
           if (fig.crelleno !== "white"){
-            RellenarCuadrado(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, fig.crelleno);
+            RellenarCuadrado(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, fig.crelleno, fig.angulo);
           }
         break;
       case 'poligono':
-        PoligonoRegular(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l,);
+        PoligonoRegular(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, fig.angulo);
           if (fig.crelleno !== "white"){
-            RellenarPoligonoRegular(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, fig.crelleno);
+            RellenarPoligonoRegular(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, fig.crelleno, fig.angulo);
           }
         break;
       case 'trapecio':
-        DibujarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r);
+        DibujarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r, fig.angulo);
           if (fig.crelleno !== "white"){
-            RellenarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, fig.crelleno);
+            RellenarTrapecio(contexto, fig.co.x1, fig.co.y1, fig.r,  fig.l, fig.crelleno, fig.angulo);
           }
         break;
       case 'elipse':
         a = Math.abs(x2 - x1);
         b = Math.abs(y2 - y1);
-        DibujarElipse(contexto, fig.co.x1, fig.co.y1, a, b);
+        DibujarElipse(contexto, fig.co.x1, fig.co.y1, a, b, fig.angulo);
           if (fig.crelleno !== "white"){
-            RellenarElipse(contexto, fig.co.x1, fig.co.y1, a, b, fig.crelleno);
+            RellenarElipse(contexto, fig.co.x1, fig.co.y1, a, b, fig.crelleno, fig.angulo);
           }
         break;
       case 'linea':
-        LineaDDA(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2);
+        LineaDDAA(contexto, fig.co.x1, fig.co.y1, fig.co.x2, fig.co.y2, fig.angulo);
         break;
       case 'texto':
         Escribir(contexto, fig.crelleno, fig.co.x1, fig.co.y1)
@@ -762,7 +885,7 @@ function Redibujo (){
 function guardar(pilaFiguras) {
   let contenido = '';
   pilaFiguras.items.forEach(figura => {
-    contenido += `Indice: ${figura.indice}, Tipo: ${figura.tipo}, x1: ${figura.co.x1}, y1: ${figura.co.y1}, x2: ${figura.co.x2}, y2: ${figura.co.y2}), Radio: ${figura.r}, Lados: ${figura.l}, Borde: ${figura.cborde}, Relleno: ${figura.crelleno}\n`;
+    contenido += `Indice: ${figura.indice}, Tipo: ${figura.tipo}, x1: ${figura.co.x1}, y1: ${figura.co.y1}, x2: ${figura.co.x2}, y2: ${figura.co.y2}), Radio: ${figura.r}, Lados: ${figura.l}, Borde: ${figura.cborde}, Relleno: ${figura.crelleno}, Angulo: ${figura.angulo}\n`;
   });
   const blob = new Blob([contenido], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
@@ -809,8 +932,8 @@ function parsearContenidoFiguras(contenido) {
       const l = parseInt(partes[7].split(':')[1].trim());
       const borde = partes[8].split(':')[1].trim();
       const relleno = partes[9].split(':')[1].trim();
-
-      const figura = new Figura(indiceParte, tipoParte, x1, y1, x2, y2, r, l, borde, relleno);
+      const angulo = parseFloat(partes[10].split(':')[1].trim());
+      const figura = new Figura(indiceParte, tipoParte, x1, y1, x2, y2, r, l, borde, relleno, angulo);
       figuras.push(figura);
     }
   });
@@ -1261,3 +1384,31 @@ function rehacer() {
       Redibujo();
   }
 }
+
+//FUNCION QUE CALCULA EL VALOR DEL ANGULO
+function calcularAngulo(PtInicioX, PtInicioY, PtFinalX, PtFinalY) {
+  angulo = Math.atan2(PtFinalY - PtInicioY, PtFinalX - PtInicioX);
+  return angulo 
+}
+
+
+
+
+
+//FUNCION PARA ROTAR LOS PUNTOS ALREDEDOR DEL CENTRO DE LA FIGURA
+function rotarPunto(x, y, cx, cy, angulo) {
+  const newX = (x - cx) * Math.cos(angulo) - (y - cy) * Math.sin(angulo) + cx;
+  const newY = (x - cx) * Math.sin(angulo) + (y - cy) * Math.cos(angulo) + cy;
+  return { x: newX, y: newY };
+}
+
+//FUNCION PARA ROTAR LA FIGURA POR SU ANGULO CENTRAL
+function rotarFigura(figura, centroX, centroY, angulo) {
+  const puntosRotados = [];
+  for (const punto of figura) {
+    const puntoRotado = rotarPunto(punto.x, punto.y, centroX, centroY, angulo);
+    puntosRotados.push(puntoRotado);
+  }
+  return puntosRotados;
+}
+
