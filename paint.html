@@ -213,6 +213,8 @@
                     dx = fig.co.x2 - fig.co.x1;
                     dy = fig.co.y2 - fig.co.y1;
                     LineaDDA(previewContext, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, (event.clientX - mainCanvas.getBoundingClientRect().left + dx), (event.clientY - mainCanvas.getBoundingClientRect().top + dy));
+                }else if(tipo == 'texto'){
+                    previewContext.fillText(fig.crelleno, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top));
                 }
                 
             }
