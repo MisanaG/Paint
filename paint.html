@@ -176,28 +176,26 @@
             }else if (Texto == true){
                 previewCanvas.style.zIndex = -1; 
             }else if (Escalar == true){
-                
+                fig = pila1.items[aux];
+                let a = fig.angulo;
                 if (tipo == 'circulo'){
                     radio = Math.sqrt(Math.pow((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x, 2) + Math.pow((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y, 2));
                     CirculoBresenham(previewContext, PtInicio.x, PtInicio.y, radio);
                 }else if (tipo == 'rectangulo'){
-                    DibujarRectangulo(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
+                    DibujarRectangulo(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, a);
                 }else if (tipo == 'cuadrado'){
-                    fig = pila1.items[aux];
-                    let a = fig.angulo;
                     DibujarCuadrado(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top), a;
                 }else if (tipo == 'poligono'){
-                    fig = pila1.items[aux];
                     laux = fig.l;
                     let radio = Math.sqrt(Math.pow((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x, 2) + Math.pow((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y, 2));
-                    PoligonoRegular(previewContext, PtInicio.x, PtInicio.y, radio, laux);
+                    PoligonoRegular(previewContext, PtInicio.x, PtInicio.y, radio, laux, a);
                 }else if (tipo == 'trapecio'){
                     let radio = Math.sqrt(Math.pow((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x, 2) + Math.pow((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y, 2));
-                    DibujarTrapecio(previewContext, PtInicio.x, PtInicio.y, radio);
+                    DibujarTrapecio(previewContext, PtInicio.x, PtInicio.y, radio ,a);
                 }else if (tipo == 'elipse'){
                     radioX = Math.abs((event.clientX - mainCanvas.getBoundingClientRect().left) - PtInicio.x);
                     radioY = Math.abs((event.clientY - mainCanvas.getBoundingClientRect().top) - PtInicio.y);
-                    DibujarElipse(previewContext, PtInicio.x, PtInicio.y, radioX, radioY);
+                    DibujarElipse(previewContext, PtInicio.x, PtInicio.y, radioX, radioY, a);
                 }else if (tipo == 'linea'){
                     LineaDDA(previewContext, PtInicio.x, PtInicio.y, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top);
                 }
@@ -206,19 +204,19 @@
                 fig = pila1.items[aux];
                 dx = Math.abs(fig.co.x2 - fig.co.x1);
                 dy = Math.abs(fig.co.y2 - fig.co.y1);
-
+                let a = fig.angulo;
                 if (tipo == 'circulo'){
                     CirculoBresenham(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), fig.r);
                 }else if (tipo == 'rectangulo'){
                     DibujarRectangulo(previewContext, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, (event.clientX - mainCanvas.getBoundingClientRect().left + dx), (event.clientY - mainCanvas.getBoundingClientRect().top + dy));
                 }else if (tipo == 'cuadrado'){
-                    DibujarCuadrado(previewContext, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, (event.clientX - mainCanvas.getBoundingClientRect().left + dx), (event.clientY - mainCanvas.getBoundingClientRect().top + dy), fig.angulo);
+                    DibujarCuadrado(previewContext, event.clientX - mainCanvas.getBoundingClientRect().left, event.clientY - mainCanvas.getBoundingClientRect().top, (event.clientX - mainCanvas.getBoundingClientRect().left + dx), (event.clientY - mainCanvas.getBoundingClientRect().top + dy), a);
                 }else if (tipo == 'poligono'){
-                    PoligonoRegular(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), fig.r, fig.l);
+                    PoligonoRegular(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), fig.r, fig.l, a);
                 }else if (tipo == 'trapecio'){
-                    DibujarTrapecio(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), fig.r);
+                    DibujarTrapecio(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), fig.r, a);
                 }else if (tipo == 'elipse'){
-                    DibujarElipse(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), dx, dy);
+                    DibujarElipse(previewContext, (event.clientX - mainCanvas.getBoundingClientRect().left), (event.clientY - mainCanvas.getBoundingClientRect().top), dx, dy, a);
                 }else if (tipo == 'linea'){
                     dx = fig.co.x2 - fig.co.x1;
                     dy = fig.co.y2 - fig.co.y1;
